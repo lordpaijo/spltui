@@ -15,7 +15,7 @@ $ cargo install spltui
 ```
 Dan SPLTUI berhasil terinstal.
 
-## Usage
+## Pemakaian
 Aplikasinya akan jalan di terminal, dan untuk menjalankannya adalah dengan memanggil SPLTUI di terminal.
 ```sh
 $ spltui
