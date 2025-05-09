@@ -1,7 +1,7 @@
 # SPLTUI
 Sistem Persamaan Linear Terminal User Interace, atau SPLTUI, merupakan sebuah aplikasi kalkulator hitung sistem persamaan linear (dengan) variabel berbasis _terminal user interface_ atau TUI.
 
-[![demonstrasi](https://img.youtube.com/vi/C3TQK1qg3wk/0.jpg)](https://youtu.be/C3TQK1qg3wk)
+[![demonstrasi](https://github.com/lordpaijo/spltui/blob/master/ss-0.png)](https://youtu.be/C3TQK1qg3wk)
 
 ## Dependesi
 - [Rust (& Cargo)](https://www.rust-lang.org/)
