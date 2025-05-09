@@ -127,7 +127,37 @@ impl App {
     }
 
     fn ui(&self, f: &mut ratatui::Frame<'_>) {
-        fn render_menu_ui(f: &mut Frame, area: ratatui::prelude::Rect) {
+        let owner = Line::styled(format!(" {}'s {} v{} ", "LordPaijo", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION")),
+            Style::default().fg(Color::Cyan).bold());
+
+        let ascii_lines = vec![
+            Line::from(vec![
+                Span::styled("░██████╗██████╗░██╗░░░░░", Style::default().fg(Color::Yellow)),
+                Span::styled("████████╗██╗░░░██╗██╗", Style::default().fg(Color::Green)),
+            ]),
+            Line::from(vec![
+                Span::styled("██╔════╝██╔══██╗██║░░░░░", Style::default().fg(Color::Yellow)),
+                Span::styled("╚══██╔══╝██║░░░██║██║", Style::default().fg(Color::Green)),
+            ]),
+            Line::from(vec![
+                Span::styled("╚█████╗░██████╔╝██║░░░░░", Style::default().fg(Color::Yellow)),
+                Span::styled("░░░██║░░░██║░░░██║██║", Style::default().fg(Color::Green)),
+            ]),
+            Line::from(vec![
+                Span::styled("░╚═══██╗██╔═══╝░██║░░░░░", Style::default().fg(Color::Yellow)),
+                Span::styled("░░░██║░░░██║░░░██║██║", Style::default().fg(Color::Green)),
+            ]),
+            Line::from(vec![
+                Span::styled("██████╔╝██║░░░░░███████╗", Style::default().fg(Color::Yellow)),
+                Span::styled("░░░██║░░░╚██████╔╝██║", Style::default().fg(Color::Green)),
+            ]),
+            Line::from(vec![
+                Span::styled("╚═════╝░╚═╝░░░░░╚══════╝", Style::default().fg(Color::Yellow)),
+                Span::styled("░░░╚═╝░░░░╚═════╝░╚═╝", Style::default().fg(Color::Green)),
+            ]),
+        ];
+
+        fn render_menu_ui(f: &mut Frame, area: ratatui::prelude::Rect, ascii_lines: &Vec<Line<'_>>, owner: &Line<'_>) {
             // Layout utama: Header dan Konten
             let chunks = Layout::default()
                 .direction(Direction::Vertical)
@@ -138,37 +168,7 @@ impl App {
                 .split(area);
 
             // Header Title
-            let owner = Line::styled(format!(" {}'s {} v{} ", "LordPaijo", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION")),
-                Style::default().fg(Color::Cyan).bold());
-
-            let ascii_lines = vec![
-                Line::from(vec![
-                    Span::styled("░██████╗██████╗░██╗░░░░░", Style::default().fg(Color::Yellow)),
-                    Span::styled("████████╗██╗░░░██╗██╗", Style::default().fg(Color::Green)),
-                ]),
-                Line::from(vec![
-                    Span::styled("██╔════╝██╔══██╗██║░░░░░", Style::default().fg(Color::Yellow)),
-                    Span::styled("╚══██╔══╝██║░░░██║██║", Style::default().fg(Color::Green)),
-                ]),
-                Line::from(vec![
-                    Span::styled("╚█████╗░██████╔╝██║░░░░░", Style::default().fg(Color::Yellow)),
-                    Span::styled("░░░██║░░░██║░░░██║██║", Style::default().fg(Color::Green)),
-                ]),
-                Line::from(vec![
-                    Span::styled("░╚═══██╗██╔═══╝░██║░░░░░", Style::default().fg(Color::Yellow)),
-                    Span::styled("░░░██║░░░██║░░░██║██║", Style::default().fg(Color::Green)),
-                ]),
-                Line::from(vec![
-                    Span::styled("██████╔╝██║░░░░░███████╗", Style::default().fg(Color::Yellow)),
-                    Span::styled("░░░██║░░░╚██████╔╝██║", Style::default().fg(Color::Green)),
-                ]),
-                Line::from(vec![
-                    Span::styled("╚═════╝░╚═╝░░░░░╚══════╝", Style::default().fg(Color::Yellow)),
-                    Span::styled("░░░╚═╝░░░░╚═════╝░╚═╝", Style::default().fg(Color::Green)),
-                ]),
-            ];
-
-            let title = Paragraph::new(Text::from(ascii_lines))
+            let title = Paragraph::new(Text::from(ascii_lines.to_vec()))
                 .style(Style::default())
                 .alignment(Alignment::Center)
                 .block(
@@ -176,7 +176,7 @@ impl App {
                         .borders(Borders::ALL)
                         .border_style(Style::default())
                         .fg(Color::Rgb(254, 128, 25))
-                        .title(" Header ").title_bottom(owner.centered()),
+                        .title(" Header ").title_bottom(owner.clone().centered()),
                 )
                 .wrap(Wrap { trim: false });
 
@@ -205,7 +205,8 @@ impl App {
             f.render_widget(menu, chunks[1]);
         }
 
-        fn render_input_spldv_ui(f: &mut Frame, area: Rect, inputs: &[String; 6], selected: usize) {
+        fn render_input_spldv_ui(f: &mut Frame, area: Rect, inputs: &[String; 6], selected: usize,
+            ascii_lines: &Vec<Line<'_>>, owner: &Line<'_>) {
             let outer_block = Block::default()
                 .title("Form SPLDV")
                 .borders(Borders::ALL);
@@ -220,37 +221,7 @@ impl App {
                 .split(area);
 
             // Header
-            let owner = Line::styled(format!(" {}'s {} v{} ", "LordPaijo", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION")),
-                Style::default().fg(Color::Cyan).bold());
-
-            let ascii_lines = vec![
-                Line::from(vec![
-                    Span::styled("░██████╗██████╗░██╗░░░░░", Style::default().fg(Color::Yellow)),
-                    Span::styled("████████╗██╗░░░██╗██╗", Style::default().fg(Color::Green)),
-                ]),
-                Line::from(vec![
-                    Span::styled("██╔════╝██╔══██╗██║░░░░░", Style::default().fg(Color::Yellow)),
-                    Span::styled("╚══██╔══╝██║░░░██║██║", Style::default().fg(Color::Green)),
-                ]),
-                Line::from(vec![
-                    Span::styled("╚█████╗░██████╔╝██║░░░░░", Style::default().fg(Color::Yellow)),
-                    Span::styled("░░░██║░░░██║░░░██║██║", Style::default().fg(Color::Green)),
-                ]),
-                Line::from(vec![
-                    Span::styled("░╚═══██╗██╔═══╝░██║░░░░░", Style::default().fg(Color::Yellow)),
-                    Span::styled("░░░██║░░░██║░░░██║██║", Style::default().fg(Color::Green)),
-                ]),
-                Line::from(vec![
-                    Span::styled("██████╔╝██║░░░░░███████╗", Style::default().fg(Color::Yellow)),
-                    Span::styled("░░░██║░░░╚██████╔╝██║", Style::default().fg(Color::Green)),
-                ]),
-                Line::from(vec![
-                    Span::styled("╚═════╝░╚═╝░░░░░╚══════╝", Style::default().fg(Color::Yellow)),
-                    Span::styled("░░░╚═╝░░░░╚═════╝░╚═╝", Style::default().fg(Color::Green)),
-                ]),
-            ];
-
-            let header = Paragraph::new(Text::from(ascii_lines))
+            let header = Paragraph::new(Text::from(ascii_lines.to_vec()))
                 .style(Style::default())
                 .alignment(Alignment::Center)
                 .block(
@@ -258,7 +229,7 @@ impl App {
                         .borders(Borders::ALL)
                         .border_style(Style::default())
                         .fg(Color::Rgb(254, 128, 25))
-                        .title(" Header ").title_bottom(owner.centered()),
+                        .title(" Header ").title_bottom(owner.clone().centered()),
                 )
                 .wrap(Wrap { trim: false });
             f.render_widget(header, outer_chunks[0]);
@@ -335,7 +306,8 @@ impl App {
             }
         }
 
-        fn render_input_splsv_ui(f: &mut Frame, area: Rect, inputs: &[String; 2], selected: usize) {
+        fn render_input_splsv_ui(f: &mut Frame, area: Rect, inputs: &[String; 2], selected: usize,
+            ascii_lines: &Vec<Line<'_>>, owner: &Line<'_>) {
             let outer_block = Block::default()
                 .title("Form SPLDV")
                 .borders(Borders::ALL);
@@ -350,37 +322,7 @@ impl App {
                 .split(area);
 
             // Header
-            let owner = Line::styled(format!(" {}'s {} v{} ", "LordPaijo", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION")),
-                Style::default().fg(Color::Cyan).bold());
-
-            let ascii_lines = vec![
-                Line::from(vec![
-                    Span::styled("░██████╗██████╗░██╗░░░░░", Style::default().fg(Color::Yellow)),
-                    Span::styled("████████╗██╗░░░██╗██╗", Style::default().fg(Color::Green)),
-                ]),
-                Line::from(vec![
-                    Span::styled("██╔════╝██╔══██╗██║░░░░░", Style::default().fg(Color::Yellow)),
-                    Span::styled("╚══██╔══╝██║░░░██║██║", Style::default().fg(Color::Green)),
-                ]),
-                Line::from(vec![
-                    Span::styled("╚█████╗░██████╔╝██║░░░░░", Style::default().fg(Color::Yellow)),
-                    Span::styled("░░░██║░░░██║░░░██║██║", Style::default().fg(Color::Green)),
-                ]),
-                Line::from(vec![
-                    Span::styled("░╚═══██╗██╔═══╝░██║░░░░░", Style::default().fg(Color::Yellow)),
-                    Span::styled("░░░██║░░░██║░░░██║██║", Style::default().fg(Color::Green)),
-                ]),
-                Line::from(vec![
-                    Span::styled("██████╔╝██║░░░░░███████╗", Style::default().fg(Color::Yellow)),
-                    Span::styled("░░░██║░░░╚██████╔╝██║", Style::default().fg(Color::Green)),
-                ]),
-                Line::from(vec![
-                    Span::styled("╚═════╝░╚═╝░░░░░╚══════╝", Style::default().fg(Color::Yellow)),
-                    Span::styled("░░░╚═╝░░░░╚═════╝░╚═╝", Style::default().fg(Color::Green)),
-                ]),
-            ];
-
-            let header = Paragraph::new(Text::from(ascii_lines))
+            let header = Paragraph::new(Text::from(ascii_lines.to_vec()))
                 .style(Style::default())
                 .alignment(Alignment::Center)
                 .block(
@@ -388,7 +330,7 @@ impl App {
                         .borders(Borders::ALL)
                         .border_style(Style::default())
                         .fg(Color::Rgb(254, 128, 25))
-                        .title(" Header ").title_bottom(owner.centered()),
+                        .title(" Header ").title_bottom(owner.clone().centered()),
                 )
                 .wrap(Wrap { trim: false });
             f.render_widget(header, outer_chunks[0]);
@@ -455,7 +397,7 @@ impl App {
             }
         }
 
-        fn render_result_ui(f: &mut Frame, area: Rect, result_text: &str) {
+        fn render_result_ui(f: &mut Frame, area: Rect, result_text: &str, ascii_lines: &Vec<Line<'_>>, owner: &Line<'_>) {
             let outer_chunks = Layout::default()
                 .direction(Direction::Vertical)
                 .constraints([
@@ -464,37 +406,7 @@ impl App {
                 ])
                 .split(area);
 
-            let owner = Line::styled(format!(" {}'s {} v{} ", "LordPaijo", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION")),
-                Style::default().fg(Color::Cyan).bold());
-
-            let ascii_lines = vec![
-                Line::from(vec![
-                    Span::styled("░██████╗██████╗░██╗░░░░░", Style::default().fg(Color::Yellow)),
-                    Span::styled("████████╗██╗░░░██╗██╗", Style::default().fg(Color::Green)),
-                ]),
-                Line::from(vec![
-                    Span::styled("██╔════╝██╔══██╗██║░░░░░", Style::default().fg(Color::Yellow)),
-                    Span::styled("╚══██╔══╝██║░░░██║██║", Style::default().fg(Color::Green)),
-                ]),
-                Line::from(vec![
-                    Span::styled("╚█████╗░██████╔╝██║░░░░░", Style::default().fg(Color::Yellow)),
-                    Span::styled("░░░██║░░░██║░░░██║██║", Style::default().fg(Color::Green)),
-                ]),
-                Line::from(vec![
-                    Span::styled("░╚═══██╗██╔═══╝░██║░░░░░", Style::default().fg(Color::Yellow)),
-                    Span::styled("░░░██║░░░██║░░░██║██║", Style::default().fg(Color::Green)),
-                ]),
-                Line::from(vec![
-                    Span::styled("██████╔╝██║░░░░░███████╗", Style::default().fg(Color::Yellow)),
-                    Span::styled("░░░██║░░░╚██████╔╝██║", Style::default().fg(Color::Green)),
-                ]),
-                Line::from(vec![
-                    Span::styled("╚═════╝░╚═╝░░░░░╚══════╝", Style::default().fg(Color::Yellow)),
-                    Span::styled("░░░╚═╝░░░░╚═════╝░╚═╝", Style::default().fg(Color::Green)),
-                ]),
-            ];
-
-            let header = Paragraph::new(Text::from(ascii_lines))
+            let header = Paragraph::new(Text::from(ascii_lines.to_vec()))
                 .style(Style::default())
                 .alignment(Alignment::Center)
                 .block(
@@ -502,7 +414,7 @@ impl App {
                         .borders(Borders::ALL)
                         .border_style(Style::default())
                         .fg(Color::Rgb(254, 128, 25))
-                        .title(" Header ").title_bottom(owner.centered()),
+                        .title(" Header ").title_bottom(owner.clone().centered()),
                 )
                 .wrap(Wrap { trim: false });
             f.render_widget(header, outer_chunks[0]);
@@ -538,16 +450,16 @@ impl App {
 
         match &self.state {
             AppState::Menu => {
-                render_menu_ui(f, f.area());
+                render_menu_ui(f, f.area(), &ascii_lines, &owner);
             }
             AppState::InputSPLDV(inputs, selected) => {
-                render_input_spldv_ui(f, f.area(), inputs, *selected);
+                render_input_spldv_ui(f, f.area(), inputs, *selected, &ascii_lines, &owner);
             }
             AppState::InputSPLSV(inputs, selected) => {
-                render_input_splsv_ui(f, f.area(), inputs, *selected);
+                render_input_splsv_ui(f, f.area(), inputs, *selected, &ascii_lines, &owner);
             }
             AppState::Result(result) => {
-                render_result_ui(f, f.area(), result);
+                render_result_ui(f, f.area(), result, &ascii_lines, &owner);
             }
             AppState::Exit => {}
         }
