@@ -132,21 +132,26 @@ impl App {
             let chunks = Layout::default()
                 .direction(Direction::Vertical)
                 .constraints([
-                    Constraint::Length(3), // Header
+                    Constraint::Max(9), // Header
                     Constraint::Min(0),    // Konten
                 ])
                 .split(area);
 
             // Header Title
-            let title = Paragraph::new(Line::from(vec![
-                Span::styled("SPL", Style::default().fg(Color::Cyan).bold()),
-                Span::styled("TUI", Style::default().fg(Color::White).bold()),
-                Span::raw(" by "),
-                Span::styled("LordPaijo", Style::default().fg(Color::Yellow).bold()),
-            ])) .alignment(Alignment::Center)
-                .block(Block::default()
-                .borders(Borders::ALL).border_style(Style::default()).fg(Color::Rgb(254, 128, 25))
-                .title("Header"));
+
+            let ascii_header = r#"
+░██████╗██████╗░██╗░░░░░████████╗██╗░░░██╗██╗
+██╔════╝██╔══██╗██║░░░░░╚══██╔══╝██║░░░██║██║
+╚█████╗░██████╔╝██║░░░░░░░░██║░░░██║░░░██║██║
+░╚═══██╗██╔═══╝░██║░░░░░░░░██║░░░██║░░░██║██║
+██████╔╝██║░░░░░███████╗░░░██║░░░╚██████╔╝██║
+╚═════╝░╚═╝░░░░░╚══════╝░░░╚═╝░░░░╚═════╝░╚═╝"#;
+
+            let title = Paragraph::new(Text::from(ascii_header))
+                        .style(Style::default().fg(Color::Yellow))
+                        .alignment(Alignment::Center)
+                        .block(Block::default().borders(Borders::ALL).title("Header"))
+                        .wrap(Wrap { trim: false });
 
             let instructions = Line::from(vec![
                 Span::styled(" [Q] ", Style::default().fg(Color::Red).bold()),
