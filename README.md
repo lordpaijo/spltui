@@ -3,8 +3,11 @@ Sistem Persamaan Linear Terminal User Interace, atau SPLTUI, merupakan sebuah ap
 
 [![demonstrasi](https://github.com/lordpaijo/spltui/blob/master/ss-0.png)](https://youtu.be/C3TQK1qg3wk)
 
+---
+
 ## Dependesi
 - [Rust (& Cargo)](https://www.rust-lang.org/)
+- [matematika.rs](https://github.com/lordpaijo/matematika.rs)
 - [ratatui](https://ratatui.rs/)
 - [crossterm](https://github.com/crossterm-rs/crossterm)
 
@@ -23,5 +26,13 @@ $ spltui
 Nanti, akan muncul tampilan seperti yang ada di [video demonstrasi](https://youtu.be/C3TQK1qg3wk).
 
 ---
+
+## Kompatibilitas
+| Sistem | Kestabilan |
+| :------- | :----------: |
+| Linux | ✅ |
+| Windows (cmd) | ✅ |
+| Windows (powershell) | ⚠️ |
+| MacOS | 🛠️ |
 
 Selamat mencoba~...
