@@ -127,7 +127,7 @@ impl App {
     }
 
     fn ui(&self, f: &mut ratatui::Frame<'_>) {
-        let owner = Line::styled(format!(" {}'s {} v{} ", "LordPaijo", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION")),
+        let owner = Line::styled(format!(" {} (2025) {} v{} ", "LordPaijo", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION")),
             Style::default().fg(Color::Cyan).bold());
 
         let ascii_lines = vec![
