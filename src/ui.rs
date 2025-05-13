@@ -81,7 +81,7 @@ fn render_header(f: &mut Frame, area: Rect, ascii_lines: &Vec<Line<'_>>, owner: 
                 .borders(Borders::ALL)
                 .border_style(Style::default())
                 .fg(Color::Rgb(254, 128, 25))
-                .title(" Header ")
+                .title(" Header ").bold()
                 .title_bottom(owner.clone().centered()),
         )
         .wrap(Wrap { trim: false });
@@ -122,7 +122,7 @@ fn render_menu_ui(f: &mut Frame, area: Rect, ascii_lines: &Vec<Line<'_>>, owner:
         Span::styled("SPLDV\n", Style::default().bold()),
     ]))
     .alignment(Alignment::Center)
-    .block(block.borders(Borders::ALL).title(" Menu "));
+    .block(block.borders(Borders::ALL).title(" Menu ").bold());
 
     f.render_widget(menu, chunks[1]);
 }
@@ -166,7 +166,7 @@ fn render_input_spldv_ui(
         .title_bottom(instructions.centered())
         .title(" Input SPLDV ")
         .borders(Borders::ALL)
-        .style(Style::default().fg(Color::Cyan));
+        .style(Style::default().fg(Color::Cyan)).bold();
     let inner_area = container_block.inner(outer_chunks[1]); // Ambil area dalamnya
     f.render_widget(container_block, outer_chunks[1]);
 
@@ -266,7 +266,7 @@ fn render_input_splsv_ui(
         .title_bottom(instructions.centered())
         .title(" Input SPLSV ")
         .borders(Borders::ALL)
-        .style(Style::default().fg(Color::Cyan));
+        .style(Style::default().fg(Color::Cyan).bold());
     let inner_area = container_block.inner(outer_chunks[1]); // Ambil area dalamnya
     f.render_widget(container_block, outer_chunks[1]);
 
@@ -348,7 +348,7 @@ fn render_result_ui(
         .borders(Borders::ALL)
         .border_set(border::THICK)
         .border_style(Style::default().fg(Color::Cyan))
-        .style(Style::default().fg(Color::White));
+        .style(Style::default().fg(Color::White).bold());
     let inner_area = container_block.inner(outer_chunks[1]);
     f.render_widget(container_block, outer_chunks[1]);
 

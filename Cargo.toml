@@ -9,6 +9,7 @@ repository = "https://github.com/lordpaijo/spltui"
 documentation = "https://docs.rs/spltui"
 
 [dependencies]
+clap = "4.5.38"
 crossterm = "0.28.1"
 matematika-rs = "0.3.2"
 ratatui = "0.29.0"
