@@ -1,7 +1,6 @@
 use crossterm::event::KeyCode;
 use matematika_rs::sistem::aljabar::*;
 
-/// Represents the different states of the application
 #[derive(Clone, PartialEq)]
 pub enum AppState {
     Menu,
@@ -17,16 +16,31 @@ pub struct App {
 }
 
 impl App {
-    /// Creates a new application with default state
-    pub fn new() -> Self {
+    pub fn new(splsv: bool, spldv: bool, hasil: bool) -> Self {
+        if splsv {
+            println!("Running with [--splsv]");
+            return Self {
+                state: AppState::InputSPLSV(std::array::from_fn(|_| "".to_string()), 0),
+            };
+        } else if spldv {
+            return Self {
+                state: AppState::InputSPLDV(std::array::from_fn(|_| "".to_string()), 0),
+            };
+        } else if hasil {
+            return Self {
+                state: AppState::Result(
+                    "Tidak ada hasil dari flag [--hasil]. Gunakan no-flag atau [--splsv/--spldv]"
+                        .to_string(),
+                ),
+            };
+        }
+        println!("Running default.");
         Self {
             state: AppState::Menu,
         }
     }
 
-    /// Handles key events and updates state
     pub fn on_key(&mut self, key: KeyCode) {
-        // Use match without taking mutable references to prevent borrowing issues
         match self.state.clone() {
             AppState::Menu => self.handle_menu_key(key),
             AppState::InputSPLDV(inputs, selected) => self.handle_spldv_key(key, inputs, selected),
@@ -36,17 +50,19 @@ impl App {
         }
     }
 
-    /// Handles key events in menu state
     fn handle_menu_key(&mut self, key: KeyCode) {
         match key {
-            KeyCode::Char('1') => self.state = AppState::InputSPLSV(std::array::from_fn(|_| "".to_string()), 0),
-            KeyCode::Char('2') => self.state = AppState::InputSPLDV(std::array::from_fn(|_| "".to_string()), 0),
+            KeyCode::Char('1') => {
+                self.state = AppState::InputSPLSV(std::array::from_fn(|_| "".to_string()), 0)
+            }
+            KeyCode::Char('2') => {
+                self.state = AppState::InputSPLDV(std::array::from_fn(|_| "".to_string()), 0)
+            }
             KeyCode::Char('q') | KeyCode::Char('Q') => self.state = AppState::Exit,
             _ => {}
         }
     }
 
-    /// Handles key events in SPLDV input state
     fn handle_spldv_key(&mut self, key: KeyCode, mut inputs: [String; 6], selected: usize) {
         match key {
             KeyCode::Char('q') | KeyCode::Char('Q') => self.state = AppState::Exit,
@@ -63,7 +79,11 @@ impl App {
                 self.state = AppState::InputSPLDV(inputs, new_selected);
             }
             KeyCode::Right => {
-                let new_selected = if selected < inputs.len() - 1 { selected + 1 } else { selected };
+                let new_selected = if selected < inputs.len() - 1 {
+                    selected + 1
+                } else {
+                    selected
+                };
                 self.state = AppState::InputSPLDV(inputs, new_selected);
             }
             KeyCode::Enter => {
@@ -89,7 +109,6 @@ impl App {
         }
     }
 
-    /// Handles key events in SPLSV input state
     fn handle_splsv_key(&mut self, key: KeyCode, mut inputs: [String; 2], selected: usize) {
         match key {
             KeyCode::Char('q') | KeyCode::Char('Q') => self.state = AppState::Exit,
@@ -106,7 +125,11 @@ impl App {
                 self.state = AppState::InputSPLSV(inputs, new_selected);
             }
             KeyCode::Right => {
-                let new_selected = if selected < inputs.len() - 1 { selected + 1 } else { selected };
+                let new_selected = if selected < inputs.len() - 1 {
+                    selected + 1
+                } else {
+                    selected
+                };
                 self.state = AppState::InputSPLSV(inputs, new_selected);
             }
             KeyCode::Enter => {
@@ -126,7 +149,6 @@ impl App {
         }
     }
 
-    /// Handles key events in result state
     fn handle_result_key(&mut self, key: KeyCode) {
         match key {
             KeyCode::Char('q') | KeyCode::Char('Q') => self.state = AppState::Exit,
@@ -135,7 +157,6 @@ impl App {
         }
     }
 
-    /// Returns whether the application should exit
     pub fn should_exit(&self) -> bool {
         matches!(self.state, AppState::Exit)
     }

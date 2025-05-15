@@ -1,16 +1,15 @@
+use crate::app::{App, AppState};
+use log::debug;
 use ratatui::{
-    prelude::Rect,
+    Frame,
     layout::{Alignment, Constraint, Direction, Layout},
-    style::{Style, Color, Stylize, Modifier},
+    prelude::Rect,
+    style::{Color, Modifier, Style, Stylize},
     symbols::border,
     text::{Line, Span, Text},
     widgets::{Block, Borders, Paragraph, Wrap},
-    Frame,
 };
 
-use crate::app::{App, AppState};
-
-/// Main draw function that delegates to specific UI renderers based on app state
 pub fn draw(f: &mut Frame, app: &App) {
     let ascii_lines = create_ascii_header();
     let owner = create_owner_line();
@@ -28,37 +27,79 @@ pub fn draw(f: &mut Frame, app: &App) {
     }
 }
 
-/// Creates the ASCII art header lines
+pub fn draw_verbose(f: &mut Frame, app: &App) {
+    debug!("Drawing UI.");
+    let ascii_lines = create_ascii_header();
+    let owner = create_owner_line();
+
+    match &app.state {
+        AppState::Menu => {
+            debug!("Rendering: Menu.");
+            render_menu_ui(f, f.area(), &ascii_lines, &owner)
+        }
+        AppState::InputSPLSV(inputs, selected) => {
+            debug!("Rendering: SPLSV Input Form.");
+            render_input_splsv_ui(f, f.area(), inputs, *selected, &ascii_lines, &owner)
+        }
+        AppState::InputSPLDV(inputs, selected) => {
+            debug!("Rendering: SPLDV Input Form.");
+            render_input_spldv_ui(f, f.area(), inputs, *selected, &ascii_lines, &owner)
+        }
+        AppState::Result(result) => {
+            debug!("Rendering: Result.");
+            render_result_ui(f, f.area(), result, &ascii_lines, &owner)
+        }
+        AppState::Exit => {}
+    }
+}
+
 fn create_ascii_header() -> Vec<Line<'static>> {
     vec![
         Line::from(vec![
-            Span::styled("░██████╗██████╗░██╗░░░░░", Style::default().fg(Color::Yellow)),
+            Span::styled(
+                "░██████╗██████╗░██╗░░░░░",
+                Style::default().fg(Color::Yellow),
+            ),
             Span::styled("████████╗██╗░░░██╗██╗", Style::default().fg(Color::Green)),
         ]),
         Line::from(vec![
-            Span::styled("██╔════╝██╔══██╗██║░░░░░", Style::default().fg(Color::Yellow)),
+            Span::styled(
+                "██╔════╝██╔══██╗██║░░░░░",
+                Style::default().fg(Color::Yellow),
+            ),
             Span::styled("╚══██╔══╝██║░░░██║██║", Style::default().fg(Color::Green)),
         ]),
         Line::from(vec![
-            Span::styled("╚█████╗░██████╔╝██║░░░░░", Style::default().fg(Color::Yellow)),
+            Span::styled(
+                "╚█████╗░██████╔╝██║░░░░░",
+                Style::default().fg(Color::Yellow),
+            ),
             Span::styled("░░░██║░░░██║░░░██║██║", Style::default().fg(Color::Green)),
         ]),
         Line::from(vec![
-            Span::styled("░╚═══██╗██╔═══╝░██║░░░░░", Style::default().fg(Color::Yellow)),
+            Span::styled(
+                "░╚═══██╗██╔═══╝░██║░░░░░",
+                Style::default().fg(Color::Yellow),
+            ),
             Span::styled("░░░██║░░░██║░░░██║██║", Style::default().fg(Color::Green)),
         ]),
         Line::from(vec![
-            Span::styled("██████╔╝██║░░░░░███████╗", Style::default().fg(Color::Yellow)),
+            Span::styled(
+                "██████╔╝██║░░░░░███████╗",
+                Style::default().fg(Color::Yellow),
+            ),
             Span::styled("░░░██║░░░╚██████╔╝██║", Style::default().fg(Color::Green)),
         ]),
         Line::from(vec![
-            Span::styled("╚═════╝░╚═╝░░░░░╚══════╝", Style::default().fg(Color::Yellow)),
+            Span::styled(
+                "╚═════╝░╚═╝░░░░░╚══════╝",
+                Style::default().fg(Color::Yellow),
+            ),
             Span::styled("░░░╚═╝░░░░╚═════╝░╚═╝", Style::default().fg(Color::Green)),
         ]),
     ]
 }
 
-/// Creates the owner line for the footer
 fn create_owner_line() -> Line<'static> {
     Line::styled(
         format!(
@@ -71,17 +112,16 @@ fn create_owner_line() -> Line<'static> {
     )
 }
 
-/// Renders the header block with ASCII art
 fn render_header(f: &mut Frame, area: Rect, ascii_lines: &Vec<Line<'_>>, owner: &Line<'_>) {
     let header = Paragraph::new(Text::from(ascii_lines.to_vec()))
-        .style(Style::default())
+        .style(Style::default().bold())
         .alignment(Alignment::Center)
         .block(
             Block::default()
                 .borders(Borders::ALL)
-                .border_style(Style::default())
+                .border_style(Style::default().bold())
                 .fg(Color::Rgb(254, 128, 25))
-                .title(" Header ").bold()
+                .title(" Header ")
                 .title_bottom(owner.clone().centered()),
         )
         .wrap(Wrap { trim: false });
@@ -89,7 +129,6 @@ fn render_header(f: &mut Frame, area: Rect, ascii_lines: &Vec<Line<'_>>, owner: 
     f.render_widget(header, area);
 }
 
-/// Renders the main menu UI
 fn render_menu_ui(f: &mut Frame, area: Rect, ascii_lines: &Vec<Line<'_>>, owner: &Line<'_>) {
     // Layout utama: Header dan Konten
     let chunks = Layout::default()
@@ -100,7 +139,7 @@ fn render_menu_ui(f: &mut Frame, area: Rect, ascii_lines: &Vec<Line<'_>>, owner:
         ])
         .split(area);
 
-    // Header Title
+    // Header
     render_header(f, chunks[0], ascii_lines, owner);
 
     let instructions = Line::from(vec![
@@ -127,7 +166,6 @@ fn render_menu_ui(f: &mut Frame, area: Rect, ascii_lines: &Vec<Line<'_>>, owner:
     f.render_widget(menu, chunks[1]);
 }
 
-/// Renders the SPLDV input form UI
 fn render_input_spldv_ui(
     f: &mut Frame,
     area: Rect,
@@ -166,7 +204,7 @@ fn render_input_spldv_ui(
         .title_bottom(instructions.centered())
         .title(" Input SPLDV ")
         .borders(Borders::ALL)
-        .style(Style::default().fg(Color::Cyan)).bold();
+        .style(Style::default().fg(Color::Cyan).bold());
     let inner_area = container_block.inner(outer_chunks[1]); // Ambil area dalamnya
     f.render_widget(container_block, outer_chunks[1]);
 
@@ -210,11 +248,13 @@ fn render_input_spldv_ui(
                 Span::raw(&inputs[idx]),
             ]))
             .block(
-                Block::default().borders(Borders::ALL).border_style(if idx == selected {
-                    Style::default().fg(Color::Yellow)
-                } else {
-                    Style::default().fg(Color::Blue)
-                }),
+                Block::default()
+                    .borders(Borders::ALL)
+                    .border_style(if idx == selected {
+                        Style::default().fg(Color::Yellow)
+                    } else {
+                        Style::default().fg(Color::Blue)
+                    }),
             )
             .alignment(Alignment::Left)
             .style(if idx == selected {
@@ -227,7 +267,6 @@ fn render_input_spldv_ui(
     }
 }
 
-/// Renders the SPLSV input form UI
 fn render_input_splsv_ui(
     f: &mut Frame,
     area: Rect,
@@ -301,11 +340,13 @@ fn render_input_splsv_ui(
             Span::styled(&inputs[i], Style::default().bold()),
         ]))
         .block(
-            Block::default().borders(Borders::ALL).border_style(if i == selected {
-                Style::default().fg(Color::Yellow).bold()
-            } else {
-                Style::default().fg(Color::Blue).bold()
-            }),
+            Block::default()
+                .borders(Borders::ALL)
+                .border_style(if i == selected {
+                    Style::default().fg(Color::Yellow).bold()
+                } else {
+                    Style::default().fg(Color::Blue).bold()
+                }),
         )
         .alignment(Alignment::Left)
         .style(if i == selected {
@@ -317,7 +358,6 @@ fn render_input_splsv_ui(
     }
 }
 
-/// Renders the result UI
 fn render_result_ui(
     f: &mut Frame,
     area: Rect,
