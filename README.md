@@ -44,6 +44,7 @@ $ spltui --help
 | Argumen | Fungsi | Parameter | Contoh |
 |---------|--------|:---------:|--------|
 | `-h / --help` | Menamimplkan `help`. | Tidak ada | `spltui --help` |
+| `-V / --version` | Menamimplkan `version`. | Tidak ada | `spltui --version` |
 | `-v / --verbose` | Berjalan dengan mode `verbose`. | Tidak ada | `spltui --verbose` |
 | `--log-file` | Mengspesifikasikan dimana file *log* disimpan dalam mode `verbose`. | Nama file `.log` | `spltui --verbose --log-file contoh_log.log` |
 | `--spldv` | Masuk ke `state` SPLDV. | Tidak ada | `spltui --spldv` |
