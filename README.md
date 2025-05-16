@@ -35,6 +35,21 @@ $ spltui
 
 Tampilan seperti yang ada di [video demonstrasi](https://youtu.be/C3TQK1qg3wk) akan muncul.
 
+### Command Line Arguments
+Adapun komponen tambahan *CLI Args* dengan penggunaannya sebagai berikut:
+```sh
+$ spltui --help
+```
+
+| Argumen | Fungsi | Parameter | Contoh |
+|---------|--------|:---------:|--------|
+| `-h / --help` | Menamimplkan `help`. | Tidak ada | `spltui --help` |
+| `-v / --verbose` | Berjalan dengan mode `verbose`. | Tidak ada | `spltui --verbose` |
+| `--log-file` | Mengspesifikasikan dimana file *log* disimpan dalam mode `verbose`. | Nama file `.log` | `spltui --verbose --log-file contoh_log.log` |
+| `--spldv` | Masuk ke `state` SPLDV. | Tidak ada | `spltui --spldv` |
+| `--splsv` | Masuk ke `state` SPLSV. | Tidak ada | `spltui --splsv` |
+| `--hasil` | Masuk ke `state` hasil (langsung menunjukkan hasil). | Tidak ada | `spltui --splsv` |
+
 ---
 
 ## Kompatibilitas
