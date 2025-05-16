@@ -12,6 +12,8 @@ Sistem Persamaan Linear Terminal User Interface, atau SPLTUI, merupakan sebuah a
 - [matematika.rs](https://github.com/lordpaijo/matematika.rs)
 - [ratatui](https://ratatui.rs/)
 - [crossterm](https://github.com/crossterm-rs/crossterm)
+- [log](https://crates.io/crates/log)
+- [env_logger](https://crates.io/crates/env_logger)
 
 ## Instalasi
 

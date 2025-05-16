@@ -1,4 +1,5 @@
 use crate::app::{App, AppState};
+use crate::themes::gruvbox_dark;
 use log::debug;
 use ratatui::{
     Frame,
@@ -9,6 +10,17 @@ use ratatui::{
     text::{Line, Span, Text},
     widgets::{Block, Borders, Paragraph, Wrap},
 };
+
+// Colors
+static BG: Color = gruvbox_dark::BG;
+static FG: Color = gruvbox_dark::FG;
+static GREEN: Color = gruvbox_dark::GREEN;
+static YELLOW: Color = gruvbox_dark::YELLOW;
+static RED: Color = gruvbox_dark::RED;
+static CYAN: Color = gruvbox_dark::AQUA;
+static BLUE: Color = gruvbox_dark::BLUE;
+static ORANGE: Color = gruvbox_dark::ORANGE;
+//
 
 pub fn draw(f: &mut Frame, app: &App) {
     let ascii_lines = create_ascii_header();
@@ -56,46 +68,28 @@ pub fn draw_verbose(f: &mut Frame, app: &App) {
 fn create_ascii_header() -> Vec<Line<'static>> {
     vec![
         Line::from(vec![
-            Span::styled(
-                "░██████╗██████╗░██╗░░░░░",
-                Style::default().fg(Color::Yellow),
-            ),
-            Span::styled("████████╗██╗░░░██╗██╗", Style::default().fg(Color::Green)),
+            Span::styled("░██████╗██████╗░██╗░░░░░", Style::default().fg(YELLOW)),
+            Span::styled("████████╗██╗░░░██╗██╗", Style::default().fg(GREEN)),
         ]),
         Line::from(vec![
-            Span::styled(
-                "██╔════╝██╔══██╗██║░░░░░",
-                Style::default().fg(Color::Yellow),
-            ),
-            Span::styled("╚══██╔══╝██║░░░██║██║", Style::default().fg(Color::Green)),
+            Span::styled("██╔════╝██╔══██╗██║░░░░░", Style::default().fg(YELLOW)),
+            Span::styled("╚══██╔══╝██║░░░██║██║", Style::default().fg(GREEN)),
         ]),
         Line::from(vec![
-            Span::styled(
-                "╚█████╗░██████╔╝██║░░░░░",
-                Style::default().fg(Color::Yellow),
-            ),
-            Span::styled("░░░██║░░░██║░░░██║██║", Style::default().fg(Color::Green)),
+            Span::styled("╚█████╗░██████╔╝██║░░░░░", Style::default().fg(YELLOW)),
+            Span::styled("░░░██║░░░██║░░░██║██║", Style::default().fg(GREEN)),
         ]),
         Line::from(vec![
-            Span::styled(
-                "░╚═══██╗██╔═══╝░██║░░░░░",
-                Style::default().fg(Color::Yellow),
-            ),
-            Span::styled("░░░██║░░░██║░░░██║██║", Style::default().fg(Color::Green)),
+            Span::styled("░╚═══██╗██╔═══╝░██║░░░░░", Style::default().fg(YELLOW)),
+            Span::styled("░░░██║░░░██║░░░██║██║", Style::default().fg(GREEN)),
         ]),
         Line::from(vec![
-            Span::styled(
-                "██████╔╝██║░░░░░███████╗",
-                Style::default().fg(Color::Yellow),
-            ),
-            Span::styled("░░░██║░░░╚██████╔╝██║", Style::default().fg(Color::Green)),
+            Span::styled("██████╔╝██║░░░░░███████╗", Style::default().fg(YELLOW)),
+            Span::styled("░░░██║░░░╚██████╔╝██║", Style::default().fg(GREEN)),
         ]),
         Line::from(vec![
-            Span::styled(
-                "╚═════╝░╚═╝░░░░░╚══════╝",
-                Style::default().fg(Color::Yellow),
-            ),
-            Span::styled("░░░╚═╝░░░░╚═════╝░╚═╝", Style::default().fg(Color::Green)),
+            Span::styled("╚═════╝░╚═╝░░░░░╚══════╝", Style::default().fg(YELLOW)),
+            Span::styled("░░░╚═╝░░░░╚═════╝░╚═╝", Style::default().fg(GREEN)),
         ]),
     ]
 }
@@ -108,7 +102,7 @@ fn create_owner_line() -> Line<'static> {
             env!("CARGO_PKG_NAME"),
             env!("CARGO_PKG_VERSION")
         ),
-        Style::default().fg(Color::Cyan).bold(),
+        Style::default().fg(CYAN).bold(),
     )
 }
 
@@ -120,7 +114,8 @@ fn render_header(f: &mut Frame, area: Rect, ascii_lines: &Vec<Line<'_>>, owner: 
             Block::default()
                 .borders(Borders::ALL)
                 .border_style(Style::default().bold())
-                .fg(Color::Rgb(254, 128, 25))
+                .bg(BG)
+                .fg(ORANGE)
                 .title(" Header ")
                 .title_bottom(owner.clone().centered()),
         )
@@ -143,25 +138,25 @@ fn render_menu_ui(f: &mut Frame, area: Rect, ascii_lines: &Vec<Line<'_>>, owner:
     render_header(f, chunks[0], ascii_lines, owner);
 
     let instructions = Line::from(vec![
-        Span::styled(" [Q] ", Style::default().fg(Color::Red).bold()),
-        Span::styled("Quit ", Style::default().fg(Color::Red).bold()),
+        Span::styled(" [Q] ", Style::default().fg(RED).bold()),
+        Span::styled("Quit ", Style::default().fg(RED).bold()),
     ]);
 
     let block = Block::bordered()
         .title_bottom(instructions.centered())
         .border_set(border::THICK)
-        .border_style(Style::default().fg(Color::Cyan));
+        .border_style(Style::default().bg(BG).fg(CYAN));
 
     // Menu utama
     let menu = Paragraph::new(Line::from(vec![
         Span::raw("\n"),
-        Span::styled("[1] ", Style::default().fg(Color::Blue).bold()),
+        Span::styled("[1] ", Style::default().fg(BLUE).bold()),
         Span::styled("SPLSV\n", Style::default().bold()),
-        Span::styled("        [2] ", Style::default().fg(Color::Green).bold()),
+        Span::styled("        [2] ", Style::default().fg(GREEN).bold()),
         Span::styled("SPLDV\n", Style::default().bold()),
     ]))
     .alignment(Alignment::Center)
-    .block(block.borders(Borders::ALL).title(" Menu ").bold());
+    .block(block.borders(Borders::ALL).bg(BG).title(" Menu ").bold());
 
     f.render_widget(menu, chunks[1]);
 }
@@ -190,21 +185,21 @@ fn render_input_spldv_ui(
 
     // Buat blok kontainer (dengan border)
     let instructions = Line::from(vec![
-        Span::styled(" [Esc] ", Style::default().fg(Color::Blue).bold()),
-        Span::styled("Menu ", Style::default().fg(Color::White).bold()),
-        Span::styled("[←/→] ", Style::default().fg(Color::Blue).bold()),
-        Span::styled("Left/Right ", Style::default().fg(Color::White).bold()),
-        Span::styled("[Enter] ", Style::default().fg(Color::Blue).bold()),
-        Span::styled("Submit ", Style::default().fg(Color::White).bold()),
-        Span::styled("[Q] ", Style::default().fg(Color::Red).bold()),
-        Span::styled("Quit ", Style::default().fg(Color::Red).bold()),
+        Span::styled(" [Esc] ", Style::default().fg(BLUE).bold()),
+        Span::styled("Menu ", Style::default().fg(FG).bold()),
+        Span::styled("[←/→] ", Style::default().fg(BLUE).bold()),
+        Span::styled("Left/Right ", Style::default().fg(FG).bold()),
+        Span::styled("[Enter] ", Style::default().fg(BLUE).bold()),
+        Span::styled("Submit ", Style::default().fg(FG).bold()),
+        Span::styled("[Q] ", Style::default().fg(RED).bold()),
+        Span::styled("Quit ", Style::default().fg(RED).bold()),
     ]);
 
     let container_block = Block::default()
         .title_bottom(instructions.centered())
         .title(" Input SPLDV ")
         .borders(Borders::ALL)
-        .style(Style::default().fg(Color::Cyan).bold());
+        .style(Style::default().bg(BG).fg(CYAN).bold());
     let inner_area = container_block.inner(outer_chunks[1]); // Ambil area dalamnya
     f.render_widget(container_block, outer_chunks[1]);
 
@@ -251,16 +246,16 @@ fn render_input_spldv_ui(
                 Block::default()
                     .borders(Borders::ALL)
                     .border_style(if idx == selected {
-                        Style::default().fg(Color::Yellow)
+                        Style::default().fg(YELLOW)
                     } else {
-                        Style::default().fg(Color::Blue)
+                        Style::default().fg(BLUE)
                     }),
             )
             .alignment(Alignment::Left)
             .style(if idx == selected {
-                Style::default().fg(Color::Yellow)
+                Style::default().fg(YELLOW)
             } else {
-                Style::default().fg(Color::White)
+                Style::default().fg(FG)
             });
             f.render_widget(input, *area);
         }
@@ -291,21 +286,21 @@ fn render_input_splsv_ui(
 
     // Buat blok kontainer (dengan border)
     let instructions = Line::from(vec![
-        Span::styled(" [Esc] ", Style::default().fg(Color::Blue).bold()),
-        Span::styled("Menu ", Style::default().fg(Color::White).bold()),
-        Span::styled("[←/→] ", Style::default().fg(Color::Blue).bold()),
-        Span::styled("Left/Right ", Style::default().fg(Color::White).bold()),
-        Span::styled("[Enter] ", Style::default().fg(Color::Blue).bold()),
-        Span::styled("Submit ", Style::default().fg(Color::White).bold()),
-        Span::styled("[Q] ", Style::default().fg(Color::Red).bold()),
-        Span::styled("Quit ", Style::default().fg(Color::Red).bold()),
+        Span::styled(" [Esc] ", Style::default().fg(BLUE).bold()),
+        Span::styled("Menu ", Style::default().fg(FG).bold()),
+        Span::styled("[←/→] ", Style::default().fg(BLUE).bold()),
+        Span::styled("Left/Right ", Style::default().fg(FG).bold()),
+        Span::styled("[Enter] ", Style::default().fg(BLUE).bold()),
+        Span::styled("Submit ", Style::default().fg(FG).bold()),
+        Span::styled("[Q] ", Style::default().fg(RED).bold()),
+        Span::styled("Quit ", Style::default().fg(RED).bold()),
     ]);
 
     let container_block = Block::default()
         .title_bottom(instructions.centered())
         .title(" Input SPLSV ")
         .borders(Borders::ALL)
-        .style(Style::default().fg(Color::Cyan).bold());
+        .style(Style::default().bg(BG).fg(CYAN).bold());
     let inner_area = container_block.inner(outer_chunks[1]); // Ambil area dalamnya
     f.render_widget(container_block, outer_chunks[1]);
 
@@ -343,16 +338,16 @@ fn render_input_splsv_ui(
             Block::default()
                 .borders(Borders::ALL)
                 .border_style(if i == selected {
-                    Style::default().fg(Color::Yellow).bold()
+                    Style::default().fg(YELLOW).bold()
                 } else {
-                    Style::default().fg(Color::Blue).bold()
+                    Style::default().fg(BLUE).bold()
                 }),
         )
         .alignment(Alignment::Left)
         .style(if i == selected {
-            Style::default().fg(Color::Yellow).bold()
+            Style::default().fg(YELLOW).bold()
         } else {
-            Style::default().fg(Color::White).bold()
+            Style::default().fg(FG).bold()
         });
         f.render_widget(input, *area);
     }
@@ -376,10 +371,10 @@ fn render_result_ui(
     render_header(f, outer_chunks[0], ascii_lines, owner);
 
     let instructions = Line::from(vec![
-        Span::styled(" [Esc] ", Style::default().fg(Color::Blue).bold()),
-        Span::styled("Menu ", Style::default().fg(Color::White).bold()),
-        Span::styled("[Q] ", Style::default().fg(Color::Red).bold()),
-        Span::styled("Quit ", Style::default().fg(Color::Red).bold()),
+        Span::styled(" [Esc] ", Style::default().fg(BLUE).bold()),
+        Span::styled("Menu ", Style::default().fg(FG).bold()),
+        Span::styled("[Q] ", Style::default().fg(RED).bold()),
+        Span::styled("Quit ", Style::default().fg(RED).bold()),
     ]);
 
     let container_block = Block::default()
@@ -387,14 +382,14 @@ fn render_result_ui(
         .title_bottom(instructions.centered())
         .borders(Borders::ALL)
         .border_set(border::THICK)
-        .border_style(Style::default().fg(Color::Cyan))
-        .style(Style::default().fg(Color::White).bold());
+        .border_style(Style::default().fg(CYAN))
+        .style(Style::default().bg(BG).fg(FG).bold());
     let inner_area = container_block.inner(outer_chunks[1]);
     f.render_widget(container_block, outer_chunks[1]);
 
     let mut lines: Vec<Line> = vec![Line::from(vec![Span::styled(
         "Hasil:",
-        Style::default().fg(Color::Green).bold(),
+        Style::default().fg(GREEN).bold(),
     )])];
     lines.extend(result_text.lines().map(|line| Line::raw(line.to_string())));
 
