@@ -137,7 +137,7 @@ fn run_app<B: ratatui::backend::Backend>(
                 debug!("Key pressed: {:?}", key.code);
             }
 
-            app.on_key(key.code);
+            app.on_key(key);
 
             if app.should_exit() {
                 if verbose {

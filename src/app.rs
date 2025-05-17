@@ -1,5 +1,6 @@
-use crossterm::event::KeyCode;
+use crossterm::event::{KeyCode, KeyEvent};
 use matematika_rs::sistem::aljabar::*;
+use std::time::{Duration, Instant};
 
 #[derive(Clone, PartialEq)]
 pub enum AppState {
@@ -13,39 +14,47 @@ pub enum AppState {
 /// Application state and logic
 pub struct App {
     pub state: AppState,
+    last_key_time: Instant,
+    debounce_duration: Duration,
 }
 
 impl App {
     pub fn new(splsv: bool, spldv: bool, hasil: bool) -> Self {
-        if splsv {
+        let state = if splsv {
             println!("Running with [--splsv]");
-            return Self {
-                state: AppState::InputSPLSV(std::array::from_fn(|_| "".to_string()), 0),
-            };
+            AppState::InputSPLSV(std::array::from_fn(|_| "".to_string()), 0)
         } else if spldv {
-            return Self {
-                state: AppState::InputSPLDV(std::array::from_fn(|_| "".to_string()), 0),
-            };
+            AppState::InputSPLDV(std::array::from_fn(|_| "".to_string()), 0)
         } else if hasil {
-            return Self {
-                state: AppState::Result(
-                    "Tidak ada hasil dari flag [--hasil]. Gunakan no-flag atau [--splsv/--spldv]"
-                        .to_string(),
-                ),
-            };
-        }
-        println!("Running default.");
+            AppState::Result(
+                "Tidak ada hasil dari flag [--hasil]. Gunakan no-flag atau [--splsv/--spldv]"
+                    .to_string(),
+            )
+        } else {
+            println!("Running default.");
+            AppState::Menu
+        };
+
         Self {
-            state: AppState::Menu,
+            state,
+            last_key_time: Instant::now(),
+            debounce_duration: Duration::from_millis(150),
         }
     }
 
-    pub fn on_key(&mut self, key: KeyCode) {
+    pub fn on_key(&mut self, key_event: KeyEvent) {
+        let now = Instant::now();
+        if now.duration_since(self.last_key_time) < self.debounce_duration {
+            return;
+        }
+        
+        self.last_key_time = now;
+
         match self.state.clone() {
-            AppState::Menu => self.handle_menu_key(key),
-            AppState::InputSPLDV(inputs, selected) => self.handle_spldv_key(key, inputs, selected),
-            AppState::InputSPLSV(inputs, selected) => self.handle_splsv_key(key, inputs, selected),
-            AppState::Result(_) => self.handle_result_key(key),
+            AppState::Menu => self.handle_menu_key(key_event.code),
+            AppState::InputSPLDV(inputs, selected) => self.handle_spldv_key(key_event.code, inputs, selected),
+            AppState::InputSPLSV(inputs, selected) => self.handle_splsv_key(key_event.code, inputs, selected),
+            AppState::Result(_) => self.handle_result_key(key_event.code),
             AppState::Exit => {}
         }
     }
