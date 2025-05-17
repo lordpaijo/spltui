@@ -38,7 +38,7 @@ impl App {
         Self {
             state,
             last_key_time: Instant::now(),
-            debounce_duration: Duration::from_millis(150),
+            debounce_duration: Duration::from_millis(175),
         }
     }
 
