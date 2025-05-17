@@ -24,16 +24,18 @@ use app::App;
     name = "SPLTUI")]
 
 struct Args {
+    #[arg(short, long)]
+    verbose: bool,
+    #[arg(short, long)]
+    log: Option<PathBuf>,
+    #[arg(short, long, default_value = "dark")]
+    theme: String,
     #[arg(long)]
     splsv: bool,
     #[arg(long)]
     spldv: bool,
     #[arg(long)]
     hasil: bool,
-    #[arg(short, long)]
-    verbose: bool,
-    #[arg(long)]
-    log_file: Option<PathBuf>,
 }
 
 fn main() -> Result<(), io::Error> {
@@ -54,7 +56,9 @@ fn main() -> Result<(), io::Error> {
 
     // Create app and run main loop
     let mut app = App::new(args.splsv, args.spldv, args.hasil);
-    run_app(&mut terminal, &mut app, args.verbose)?;
+
+    // Just use the theme directly - it will always have a value now
+    run_app(&mut terminal, &mut app, args.verbose, args.theme.clone())?;
 
     // Restore terminal
     disable_raw_mode()?;
@@ -69,7 +73,7 @@ fn main() -> Result<(), io::Error> {
 }
 
 fn setup_logging(args: &Args) -> io::Result<PathBuf> {
-    let log_path = match &args.log_file {
+    let log_path = match &args.log {
         Some(path) => path.clone(),
         None => {
             // Use system temp directory as default location
@@ -116,6 +120,7 @@ fn run_app<B: ratatui::backend::Backend>(
     terminal: &mut Terminal<B>,
     app: &mut App,
     verbose: bool,
+    theme: String,
 ) -> io::Result<()> {
     if verbose {
         debug!("Entering application main loop");
@@ -124,9 +129,9 @@ fn run_app<B: ratatui::backend::Backend>(
     loop {
         terminal.draw(|f| {
             if !verbose {
-                ui::draw(f, app)
+                ui::draw(f, app, theme.clone())
             } else {
-                ui::draw_verbose(f, app);
+                ui::draw_verbose(f, app, theme.clone());
             }
         })?;
 

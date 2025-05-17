@@ -1,6 +1,7 @@
 use crate::app::{App, AppState};
-use crate::themes::gruvbox_dark;
+use crate::themes::{gruvbox_dark, gruvbox_light};
 use log::debug;
+use once_cell::sync::Lazy;
 use ratatui::{
     Frame,
     layout::{Alignment, Constraint, Direction, Layout},
@@ -10,91 +11,197 @@ use ratatui::{
     text::{Line, Span, Text},
     widgets::{Block, Borders, Paragraph, Wrap},
 };
+use std::sync::Mutex;
 
-// Colors
-static BG: Color = gruvbox_dark::BG;
-static FG: Color = gruvbox_dark::FG;
-static GREEN: Color = gruvbox_dark::GREEN;
-static YELLOW: Color = gruvbox_dark::YELLOW;
-static RED: Color = gruvbox_dark::RED;
-static CYAN: Color = gruvbox_dark::AQUA;
-static BLUE: Color = gruvbox_dark::BLUE;
-static ORANGE: Color = gruvbox_dark::ORANGE;
-//
+/* Theme */
+static CURRENT_THEME: Lazy<Mutex<String>> = Lazy::new(|| Mutex::new("dark".to_string()));
 
-pub fn draw(f: &mut Frame, app: &App) {
-    let ascii_lines = create_ascii_header();
-    let owner = create_owner_line();
+// Color mapping function
+pub fn get_theme_color(color_name: &str, theme: &str) -> Color {
+    match theme {
+        "dark" => match color_name {
+            "orange" => gruvbox_dark::ORANGE,
+            "yellow" => gruvbox_dark::YELLOW,
+            "green" => gruvbox_dark::GREEN,
+            "blue" => gruvbox_dark::BLUE,
+            "cyan" => gruvbox_dark::AQUA,
+            "red" => gruvbox_dark::RED,
+            "fg" => gruvbox_dark::FG,
+            _ => gruvbox_dark::BG,
+        },
+        "light" => match color_name {
+            "orange" => gruvbox_light::ORANGE,
+            "yellow" => gruvbox_light::YELLOW,
+            "green" => gruvbox_light::GREEN,
+            "blue" => gruvbox_light::BLUE,
+            "cyan" => gruvbox_light::AQUA,
+            "red" => gruvbox_light::RED,
+            "fg" => gruvbox_light::FG,
+            _ => gruvbox_light::BG,
+        },
+        _ => Color::White, // Fallback
+    }
+}
+/* --- */
 
+pub fn draw(f: &mut Frame, app: &App, theme_mode: String) {
+    let ascii_lines = create_ascii_header(&theme_mode);
+    let owner = create_owner_line(&theme_mode);
+    let mut theme = CURRENT_THEME.lock().unwrap();
+
+    // Update the current theme
+    match theme_mode.to_lowercase().as_str() {
+        "dark" => *theme = "dark".to_string(),
+        "light" => *theme = "light".to_string(),
+        _ => *theme = "dark".to_string(), // Default to dark if not specified
+    }
+
+    // Pass the current theme mode to all rendering functions
     match &app.state {
-        AppState::Menu => render_menu_ui(f, f.area(), &ascii_lines, &owner),
-        AppState::InputSPLDV(inputs, selected) => {
-            render_input_spldv_ui(f, f.area(), inputs, *selected, &ascii_lines, &owner)
+        AppState::Menu => render_menu_ui(f, f.area(), &ascii_lines, &owner, &theme_mode),
+        AppState::InputSPLDV(inputs, selected) => render_input_spldv_ui(
+            f,
+            f.area(),
+            inputs,
+            *selected,
+            &ascii_lines,
+            &owner,
+            &theme_mode,
+        ),
+        AppState::InputSPLSV(inputs, selected) => render_input_splsv_ui(
+            f,
+            f.area(),
+            inputs,
+            *selected,
+            &ascii_lines,
+            &owner,
+            &theme_mode,
+        ),
+        AppState::Result(result) => {
+            render_result_ui(f, f.area(), result, &ascii_lines, &owner, &theme_mode)
         }
-        AppState::InputSPLSV(inputs, selected) => {
-            render_input_splsv_ui(f, f.area(), inputs, *selected, &ascii_lines, &owner)
-        }
-        AppState::Result(result) => render_result_ui(f, f.area(), result, &ascii_lines, &owner),
         AppState::Exit => {}
     }
 }
 
-pub fn draw_verbose(f: &mut Frame, app: &App) {
+pub fn draw_verbose(f: &mut Frame, app: &App, theme_mode: String) {
     debug!("Drawing UI.");
-    let ascii_lines = create_ascii_header();
-    let owner = create_owner_line();
+    let ascii_lines = create_ascii_header(&theme_mode);
+    let owner = create_owner_line(&theme_mode);
+
+    // Update the current theme
+    {
+        let mut theme = CURRENT_THEME.lock().unwrap();
+        match theme_mode.to_lowercase().as_str() {
+            "dark" => *theme = "dark".to_string(),
+            "light" => *theme = "light".to_string(),
+            _ => *theme = "dark".to_string(), // Default to dark if not specified
+        }
+    }
 
     match &app.state {
         AppState::Menu => {
             debug!("Rendering: Menu.");
-            render_menu_ui(f, f.area(), &ascii_lines, &owner)
+            render_menu_ui(f, f.area(), &ascii_lines, &owner, &theme_mode)
         }
         AppState::InputSPLSV(inputs, selected) => {
             debug!("Rendering: SPLSV Input Form.");
-            render_input_splsv_ui(f, f.area(), inputs, *selected, &ascii_lines, &owner)
+            render_input_splsv_ui(
+                f,
+                f.area(),
+                inputs,
+                *selected,
+                &ascii_lines,
+                &owner,
+                &theme_mode,
+            )
         }
         AppState::InputSPLDV(inputs, selected) => {
             debug!("Rendering: SPLDV Input Form.");
-            render_input_spldv_ui(f, f.area(), inputs, *selected, &ascii_lines, &owner)
+            render_input_spldv_ui(
+                f,
+                f.area(),
+                inputs,
+                *selected,
+                &ascii_lines,
+                &owner,
+                &theme_mode,
+            )
         }
         AppState::Result(result) => {
             debug!("Rendering: Result.");
-            render_result_ui(f, f.area(), result, &ascii_lines, &owner)
+            render_result_ui(f, f.area(), result, &ascii_lines, &owner, &theme_mode)
         }
         AppState::Exit => {}
     }
 }
 
-fn create_ascii_header() -> Vec<Line<'static>> {
+fn create_ascii_header(theme: &str) -> Vec<Line<'static>> {
     vec![
         Line::from(vec![
-            Span::styled("░██████╗██████╗░██╗░░░░░", Style::default().fg(YELLOW)),
-            Span::styled("████████╗██╗░░░██╗██╗", Style::default().fg(GREEN)),
+            Span::styled(
+                "░██████╗██████╗░██╗░░░░░",
+                Style::default().fg(get_theme_color("yellow", theme)),
+            ),
+            Span::styled(
+                "████████╗██╗░░░██╗██╗",
+                Style::default().fg(get_theme_color("green", theme)),
+            ),
         ]),
         Line::from(vec![
-            Span::styled("██╔════╝██╔══██╗██║░░░░░", Style::default().fg(YELLOW)),
-            Span::styled("╚══██╔══╝██║░░░██║██║", Style::default().fg(GREEN)),
+            Span::styled(
+                "██╔════╝██╔══██╗██║░░░░░",
+                Style::default().fg(get_theme_color("yellow", theme)),
+            ),
+            Span::styled(
+                "╚══██╔══╝██║░░░██║██║",
+                Style::default().fg(get_theme_color("green", theme)),
+            ),
         ]),
         Line::from(vec![
-            Span::styled("╚█████╗░██████╔╝██║░░░░░", Style::default().fg(YELLOW)),
-            Span::styled("░░░██║░░░██║░░░██║██║", Style::default().fg(GREEN)),
+            Span::styled(
+                "╚█████╗░██████╔╝██║░░░░░",
+                Style::default().fg(get_theme_color("yellow", theme)),
+            ),
+            Span::styled(
+                "░░░██║░░░██║░░░██║██║",
+                Style::default().fg(get_theme_color("green", theme)),
+            ),
         ]),
         Line::from(vec![
-            Span::styled("░╚═══██╗██╔═══╝░██║░░░░░", Style::default().fg(YELLOW)),
-            Span::styled("░░░██║░░░██║░░░██║██║", Style::default().fg(GREEN)),
+            Span::styled(
+                "░╚═══██╗██╔═══╝░██║░░░░░",
+                Style::default().fg(get_theme_color("yellow", theme)),
+            ),
+            Span::styled(
+                "░░░██║░░░██║░░░██║██║",
+                Style::default().fg(get_theme_color("green", theme)),
+            ),
         ]),
         Line::from(vec![
-            Span::styled("██████╔╝██║░░░░░███████╗", Style::default().fg(YELLOW)),
-            Span::styled("░░░██║░░░╚██████╔╝██║", Style::default().fg(GREEN)),
+            Span::styled(
+                "██████╔╝██║░░░░░███████╗",
+                Style::default().fg(get_theme_color("yellow", theme)),
+            ),
+            Span::styled(
+                "░░░██║░░░╚██████╔╝██║",
+                Style::default().fg(get_theme_color("green", theme)),
+            ),
         ]),
         Line::from(vec![
-            Span::styled("╚═════╝░╚═╝░░░░░╚══════╝", Style::default().fg(YELLOW)),
-            Span::styled("░░░╚═╝░░░░╚═════╝░╚═╝", Style::default().fg(GREEN)),
+            Span::styled(
+                "╚═════╝░╚═╝░░░░░╚══════╝",
+                Style::default().fg(get_theme_color("yellow", theme)),
+            ),
+            Span::styled(
+                "░░░╚═╝░░░░╚═════╝░╚═╝",
+                Style::default().fg(get_theme_color("green", theme)),
+            ),
         ]),
     ]
 }
 
-fn create_owner_line() -> Line<'static> {
+fn create_owner_line(theme: &str) -> Line<'static> {
     Line::styled(
         format!(
             " {} (2025) {} v{} ",
@@ -102,11 +209,17 @@ fn create_owner_line() -> Line<'static> {
             env!("CARGO_PKG_NAME"),
             env!("CARGO_PKG_VERSION")
         ),
-        Style::default().fg(CYAN).bold(),
+        Style::default().fg(get_theme_color("cyan", theme)).bold(),
     )
 }
 
-fn render_header(f: &mut Frame, area: Rect, ascii_lines: &Vec<Line<'_>>, owner: &Line<'_>) {
+fn render_header(
+    f: &mut Frame,
+    area: Rect,
+    ascii_lines: &Vec<Line<'_>>,
+    owner: &Line<'_>,
+    theme: &str,
+) {
     let header = Paragraph::new(Text::from(ascii_lines.to_vec()))
         .style(Style::default().bold())
         .alignment(Alignment::Center)
@@ -114,8 +227,8 @@ fn render_header(f: &mut Frame, area: Rect, ascii_lines: &Vec<Line<'_>>, owner: 
             Block::default()
                 .borders(Borders::ALL)
                 .border_style(Style::default().bold())
-                .bg(BG)
-                .fg(ORANGE)
+                .bg(get_theme_color("bg", theme))
+                .fg(get_theme_color("orange", theme))
                 .title(" Header ")
                 .title_bottom(owner.clone().centered()),
         )
@@ -124,7 +237,13 @@ fn render_header(f: &mut Frame, area: Rect, ascii_lines: &Vec<Line<'_>>, owner: 
     f.render_widget(header, area);
 }
 
-fn render_menu_ui(f: &mut Frame, area: Rect, ascii_lines: &Vec<Line<'_>>, owner: &Line<'_>) {
+fn render_menu_ui(
+    f: &mut Frame,
+    area: Rect,
+    ascii_lines: &Vec<Line<'_>>,
+    owner: &Line<'_>,
+    theme: &str,
+) {
     // Layout utama: Header dan Konten
     let chunks = Layout::default()
         .direction(Direction::Vertical)
@@ -135,28 +254,52 @@ fn render_menu_ui(f: &mut Frame, area: Rect, ascii_lines: &Vec<Line<'_>>, owner:
         .split(area);
 
     // Header
-    render_header(f, chunks[0], ascii_lines, owner);
+    render_header(f, chunks[0], ascii_lines, owner, theme);
 
     let instructions = Line::from(vec![
-        Span::styled(" [Q] ", Style::default().fg(RED).bold()),
-        Span::styled("Quit ", Style::default().fg(RED).bold()),
+        Span::styled(
+            " [Q] ",
+            Style::default().fg(get_theme_color("red", theme)).bold(),
+        ),
+        Span::styled(
+            "Quit ",
+            Style::default().fg(get_theme_color("red", theme)).bold(),
+        ),
     ]);
 
     let block = Block::bordered()
         .title_bottom(instructions.centered())
         .border_set(border::THICK)
-        .border_style(Style::default().bg(BG).fg(CYAN));
+        .border_style(Style::default().fg(get_theme_color("cyan", theme)));
 
     // Menu utama
     let menu = Paragraph::new(Line::from(vec![
         Span::raw("\n"),
-        Span::styled("[1] ", Style::default().fg(BLUE).bold()),
-        Span::styled("SPLSV\n", Style::default().bold()),
-        Span::styled("        [2] ", Style::default().fg(GREEN).bold()),
-        Span::styled("SPLDV\n", Style::default().bold()),
+        Span::styled(
+            "[1] ",
+            Style::default().fg(get_theme_color("blue", theme)).bold(),
+        ),
+        Span::styled(
+            "SPLSV\n",
+            Style::default().fg(get_theme_color("fg", theme)).bold(),
+        ),
+        Span::styled(
+            "        [2] ",
+            Style::default().fg(get_theme_color("green", theme)).bold(),
+        ),
+        Span::styled(
+            "SPLDV\n",
+            Style::default().fg(get_theme_color("fg", theme)).bold(),
+        ),
     ]))
     .alignment(Alignment::Center)
-    .block(block.borders(Borders::ALL).bg(BG).title(" Menu ").bold());
+    .block(
+        block
+            .borders(Borders::ALL)
+            .bg(get_theme_color("bg", theme))
+            .title(" Menu ")
+            .bold(),
+    );
 
     f.render_widget(menu, chunks[1]);
 }
@@ -168,6 +311,7 @@ fn render_input_spldv_ui(
     selected: usize,
     ascii_lines: &Vec<Line<'_>>,
     owner: &Line<'_>,
+    theme: &str,
 ) {
     let outer_block = Block::default().title("Form SPLDV").borders(Borders::ALL);
     f.render_widget(outer_block, area);
@@ -181,25 +325,54 @@ fn render_input_spldv_ui(
         .split(area);
 
     // Header
-    render_header(f, outer_chunks[0], ascii_lines, owner);
+    render_header(f, outer_chunks[0], ascii_lines, owner, theme);
 
     // Buat blok kontainer (dengan border)
     let instructions = Line::from(vec![
-        Span::styled(" [Esc] ", Style::default().fg(BLUE).bold()),
-        Span::styled("Menu ", Style::default().fg(FG).bold()),
-        Span::styled("[←/→] ", Style::default().fg(BLUE).bold()),
-        Span::styled("Left/Right ", Style::default().fg(FG).bold()),
-        Span::styled("[Enter] ", Style::default().fg(BLUE).bold()),
-        Span::styled("Submit ", Style::default().fg(FG).bold()),
-        Span::styled("[Q] ", Style::default().fg(RED).bold()),
-        Span::styled("Quit ", Style::default().fg(RED).bold()),
+        Span::styled(
+            " [Esc] ",
+            Style::default().fg(get_theme_color("blue", theme)).bold(),
+        ),
+        Span::styled(
+            "Menu ",
+            Style::default().fg(get_theme_color("fg", theme)).bold(),
+        ),
+        Span::styled(
+            "[←/→] ",
+            Style::default().fg(get_theme_color("blue", theme)).bold(),
+        ),
+        Span::styled(
+            "Left/Right ",
+            Style::default().fg(get_theme_color("fg", theme)).bold(),
+        ),
+        Span::styled(
+            "[Enter] ",
+            Style::default().fg(get_theme_color("blue", theme)).bold(),
+        ),
+        Span::styled(
+            "Submit ",
+            Style::default().fg(get_theme_color("fg", theme)).bold(),
+        ),
+        Span::styled(
+            "[Q] ",
+            Style::default().fg(get_theme_color("red", theme)).bold(),
+        ),
+        Span::styled(
+            "Quit ",
+            Style::default().fg(get_theme_color("red", theme)).bold(),
+        ),
     ]);
 
     let container_block = Block::default()
         .title_bottom(instructions.centered())
         .title(" Input SPLDV ")
         .borders(Borders::ALL)
-        .style(Style::default().bg(BG).fg(CYAN).bold());
+        .style(
+            Style::default()
+                .bg(get_theme_color("bg", theme))
+                .fg(get_theme_color("cyan", theme))
+                .bold(),
+        );
     let inner_area = container_block.inner(outer_chunks[1]); // Ambil area dalamnya
     f.render_widget(container_block, outer_chunks[1]);
 
@@ -246,16 +419,16 @@ fn render_input_spldv_ui(
                 Block::default()
                     .borders(Borders::ALL)
                     .border_style(if idx == selected {
-                        Style::default().fg(YELLOW)
+                        Style::default().fg(get_theme_color("yellow", theme))
                     } else {
-                        Style::default().fg(BLUE)
+                        Style::default().fg(get_theme_color("blue", theme))
                     }),
             )
             .alignment(Alignment::Left)
             .style(if idx == selected {
-                Style::default().fg(YELLOW)
+                Style::default().fg(get_theme_color("yellow", theme))
             } else {
-                Style::default().fg(FG)
+                Style::default().fg(get_theme_color("fg", theme))
             });
             f.render_widget(input, *area);
         }
@@ -269,6 +442,7 @@ fn render_input_splsv_ui(
     selected: usize,
     ascii_lines: &Vec<Line<'_>>,
     owner: &Line<'_>,
+    theme: &str,
 ) {
     let outer_block = Block::default().title("Form SPLSV").borders(Borders::ALL);
     f.render_widget(outer_block, area);
@@ -282,25 +456,54 @@ fn render_input_splsv_ui(
         .split(area);
 
     // Header
-    render_header(f, outer_chunks[0], ascii_lines, owner);
+    render_header(f, outer_chunks[0], ascii_lines, owner, theme);
 
     // Buat blok kontainer (dengan border)
     let instructions = Line::from(vec![
-        Span::styled(" [Esc] ", Style::default().fg(BLUE).bold()),
-        Span::styled("Menu ", Style::default().fg(FG).bold()),
-        Span::styled("[←/→] ", Style::default().fg(BLUE).bold()),
-        Span::styled("Left/Right ", Style::default().fg(FG).bold()),
-        Span::styled("[Enter] ", Style::default().fg(BLUE).bold()),
-        Span::styled("Submit ", Style::default().fg(FG).bold()),
-        Span::styled("[Q] ", Style::default().fg(RED).bold()),
-        Span::styled("Quit ", Style::default().fg(RED).bold()),
+        Span::styled(
+            " [Esc] ",
+            Style::default().fg(get_theme_color("blue", theme)).bold(),
+        ),
+        Span::styled(
+            "Menu ",
+            Style::default().fg(get_theme_color("fg", theme)).bold(),
+        ),
+        Span::styled(
+            "[←/→] ",
+            Style::default().fg(get_theme_color("blue", theme)).bold(),
+        ),
+        Span::styled(
+            "Left/Right ",
+            Style::default().fg(get_theme_color("fg", theme)).bold(),
+        ),
+        Span::styled(
+            "[Enter] ",
+            Style::default().fg(get_theme_color("blue", theme)).bold(),
+        ),
+        Span::styled(
+            "Submit ",
+            Style::default().fg(get_theme_color("fg", theme)).bold(),
+        ),
+        Span::styled(
+            "[Q] ",
+            Style::default().fg(get_theme_color("red", theme)).bold(),
+        ),
+        Span::styled(
+            "Quit ",
+            Style::default().fg(get_theme_color("red", theme)).bold(),
+        ),
     ]);
 
     let container_block = Block::default()
         .title_bottom(instructions.centered())
         .title(" Input SPLSV ")
         .borders(Borders::ALL)
-        .style(Style::default().bg(BG).fg(CYAN).bold());
+        .style(
+            Style::default()
+                .bg(get_theme_color("bg", theme))
+                .fg(get_theme_color("cyan", theme))
+                .bold(),
+        );
     let inner_area = container_block.inner(outer_chunks[1]); // Ambil area dalamnya
     f.render_widget(container_block, outer_chunks[1]);
 
@@ -338,16 +541,16 @@ fn render_input_splsv_ui(
             Block::default()
                 .borders(Borders::ALL)
                 .border_style(if i == selected {
-                    Style::default().fg(YELLOW).bold()
+                    Style::default().fg(get_theme_color("yellow", theme)).bold()
                 } else {
-                    Style::default().fg(BLUE).bold()
+                    Style::default().fg(get_theme_color("blue", theme)).bold()
                 }),
         )
         .alignment(Alignment::Left)
         .style(if i == selected {
-            Style::default().fg(YELLOW).bold()
+            Style::default().fg(get_theme_color("yellow", theme)).bold()
         } else {
-            Style::default().fg(FG).bold()
+            Style::default().fg(get_theme_color("fg", theme)).bold()
         });
         f.render_widget(input, *area);
     }
@@ -359,6 +562,7 @@ fn render_result_ui(
     result_text: &str,
     ascii_lines: &Vec<Line<'_>>,
     owner: &Line<'_>,
+    theme: &str,
 ) {
     let outer_chunks = Layout::default()
         .direction(Direction::Vertical)
@@ -368,13 +572,25 @@ fn render_result_ui(
         ])
         .split(area);
 
-    render_header(f, outer_chunks[0], ascii_lines, owner);
+    render_header(f, outer_chunks[0], ascii_lines, owner, theme);
 
     let instructions = Line::from(vec![
-        Span::styled(" [Esc] ", Style::default().fg(BLUE).bold()),
-        Span::styled("Menu ", Style::default().fg(FG).bold()),
-        Span::styled("[Q] ", Style::default().fg(RED).bold()),
-        Span::styled("Quit ", Style::default().fg(RED).bold()),
+        Span::styled(
+            " [Esc] ",
+            Style::default().fg(get_theme_color("blue", theme)).bold(),
+        ),
+        Span::styled(
+            "Menu ",
+            Style::default().fg(get_theme_color("fg", theme)).bold(),
+        ),
+        Span::styled(
+            "[Q] ",
+            Style::default().fg(get_theme_color("red", theme)).bold(),
+        ),
+        Span::styled(
+            "Quit ",
+            Style::default().fg(get_theme_color("red", theme)).bold(),
+        ),
     ]);
 
     let container_block = Block::default()
@@ -382,14 +598,19 @@ fn render_result_ui(
         .title_bottom(instructions.centered())
         .borders(Borders::ALL)
         .border_set(border::THICK)
-        .border_style(Style::default().fg(CYAN))
-        .style(Style::default().bg(BG).fg(FG).bold());
+        .border_style(Style::default().fg(get_theme_color("cyan", theme)))
+        .style(
+            Style::default()
+                .bg(get_theme_color("bg", theme))
+                .fg(get_theme_color("fg", theme))
+                .bold(),
+        );
     let inner_area = container_block.inner(outer_chunks[1]);
     f.render_widget(container_block, outer_chunks[1]);
 
     let mut lines: Vec<Line> = vec![Line::from(vec![Span::styled(
         "Hasil:",
-        Style::default().fg(GREEN).bold(),
+        Style::default().fg(get_theme_color("green", theme)).bold(),
     )])];
     lines.extend(result_text.lines().map(|line| Line::raw(line.to_string())));
 
