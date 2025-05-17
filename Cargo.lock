@@ -602,7 +602,6 @@ dependencies = [
  "env_logger",
  "log",
  "matematika-rs",
- "once_cell",
  "ratatui",
 ]
 

@@ -1,7 +1,6 @@
 use clap::Parser;
-#[allow(unused_imports)]
 use crossterm::{
-    event::{self, DisableMouseCapture, EnableMouseCapture, Event},
+    event::{self, EnableMouseCapture, Event},
     execute,
     terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
 };
@@ -56,8 +55,6 @@ fn main() -> Result<(), io::Error> {
 
     // Create app and run main loop
     let mut app = App::new(args.splsv, args.spldv, args.hasil);
-
-    // Just use the theme directly - it will always have a value now
     run_app(&mut terminal, &mut app, args.verbose, args.theme.clone())?;
 
     // Restore terminal

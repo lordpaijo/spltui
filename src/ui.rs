@@ -1,7 +1,6 @@
 use crate::app::{App, AppState};
 use crate::themes::{gruvbox_dark, gruvbox_light};
 use log::debug;
-use once_cell::sync::Lazy;
 use ratatui::{
     Frame,
     layout::{Alignment, Constraint, Direction, Layout},
@@ -11,10 +10,6 @@ use ratatui::{
     text::{Line, Span, Text},
     widgets::{Block, Borders, Paragraph, Wrap},
 };
-use std::sync::Mutex;
-
-/* Theme */
-static CURRENT_THEME: Lazy<Mutex<String>> = Lazy::new(|| Mutex::new("dark".to_string()));
 
 // Color mapping function
 pub fn get_theme_color(color_name: &str, theme: &str) -> Color {
@@ -42,19 +37,10 @@ pub fn get_theme_color(color_name: &str, theme: &str) -> Color {
         _ => Color::White, // Fallback
     }
 }
-/* --- */
 
 pub fn draw(f: &mut Frame, app: &App, theme_mode: String) {
     let ascii_lines = create_ascii_header(&theme_mode);
     let owner = create_owner_line(&theme_mode);
-    let mut theme = CURRENT_THEME.lock().unwrap();
-
-    // Update the current theme
-    match theme_mode.to_lowercase().as_str() {
-        "dark" => *theme = "dark".to_string(),
-        "light" => *theme = "light".to_string(),
-        _ => *theme = "dark".to_string(), // Default to dark if not specified
-    }
 
     // Pass the current theme mode to all rendering functions
     match &app.state {
@@ -88,16 +74,6 @@ pub fn draw_verbose(f: &mut Frame, app: &App, theme_mode: String) {
     debug!("Drawing UI.");
     let ascii_lines = create_ascii_header(&theme_mode);
     let owner = create_owner_line(&theme_mode);
-
-    // Update the current theme
-    {
-        let mut theme = CURRENT_THEME.lock().unwrap();
-        match theme_mode.to_lowercase().as_str() {
-            "dark" => *theme = "dark".to_string(),
-            "light" => *theme = "light".to_string(),
-            _ => *theme = "dark".to_string(), // Default to dark if not specified
-        }
-    }
 
     match &app.state {
         AppState::Menu => {
