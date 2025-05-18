@@ -6,6 +6,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/lordpaijo/spltui)](https://github.com/lordpaijo/spltui/issues)
 [![GitHub forks](https://img.shields.io/github/forks/lordpaijo/spltui)](https://github.com/lordpaijo/spltui/network/members)
 [![GitHub commits](https://img.shields.io/github/commit-activity/m/lordpaijo/spltui)](https://github.com/lordpaijo/spltui/commits/main)
+[![MIT License](https://img.shields.io/github/license/lordpaijo/spltui)](https://github.com/lordpaijo/spltui/blob/main/LICENSE)
 
 Sistem Persamaan Linear Terminal User Interface, atau SPLTUI, merupakan sebuah aplikasi kalkulator untuk menghitung sistem persamaan linear dengan berbagai variabel berbasis *terminal user interface* atau TUI.
 
