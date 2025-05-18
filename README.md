@@ -25,7 +25,7 @@ Sistem Persamaan Linear Terminal User Interface, atau SPLTUI, merupakan sebuah a
 
 ## Instalasi
 
-### Via Cargo
+### Via Cargo (Recommended)
 Pastikan Rust dan Cargo sudah terinstal. Jika sudah, jalankan perintah berikut:
 
 ```sh
@@ -39,7 +39,7 @@ Untuk mengunduh file executable (`.exe`) dari SPLTUI, dapat dilakukan melalui du
 - [Dropbox: spltui.exe](https://www.dropbox.com/scl/fi/18bul9bxh8eu6u4nrz1rb/spltui.exe?rlkey=6magnxbz11tno33cy90vyg4qq&st=6n2mka20&dl=0)
 - [Mega: spltui.exe](https://mega.nz/file/93U2maQS#STYE598ZXtwMA1iqjhbEvyAuLe0UrtAQKLsx7YgBA8A)
 
-Peringatan: Dengan menggunakan file executable, antivirus dapat mendeteksinya sebagai virus dan / hingga menghapusnya.
+**Peringatan**: Dengan menggunakan file executable, antivirus dapat mendeteksinya sebagai virus dan / hingga menghapusnya.
 
 ## Penggunaan
 
