@@ -74,9 +74,10 @@ $ spltui --help
 
 | Sistem Operasi | Kestabilan |
 | :------------- | :--------: |
-| Linux          |     ✅    |
-| Windows (cmd)  |     ✅    |
-| Windows (powershell) | ✅  |
-| MacOS          |     🛠️    |
+| Android (Termux) |   ✅     |
+| IOS (Termux)     |   🛠️     |
+| Linux          |     ✅     |
+| Windows        |     ✅     |
+| MacOS          |     🛠️     |
 
 Selamat mencoba~!
