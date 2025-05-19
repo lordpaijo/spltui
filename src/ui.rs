@@ -71,6 +71,11 @@ pub fn draw(f: &mut Frame, app: &App, theme_mode: String) {
 }
 
 pub fn draw_verbose(f: &mut Frame, app: &App, theme_mode: String) {
+    match theme_mode.to_lowercase().as_str() {
+        "dark" => debug!("Theme: Dark"),
+        "light" => debug!("Theme: Light"),
+        _ => {}
+    }
     debug!("Drawing UI.");
     let ascii_lines = create_ascii_header(&theme_mode);
     let owner = create_owner_line(&theme_mode);

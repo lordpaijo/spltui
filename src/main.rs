@@ -1,3 +1,4 @@
+use chrono::Local;
 use clap::Parser;
 use crossterm::{
     event::{self, EnableMouseCapture, Event},
@@ -75,7 +76,9 @@ fn setup_logging(args: &Args) -> io::Result<PathBuf> {
         None => {
             // Use system temp directory as default location
             let mut temp_path = std::env::temp_dir();
-            temp_path.push("ratatui_app.log");
+            let current_date = Local::now().format("%Y-%m-%d").to_string();
+
+            temp_path.push(format!("spltui/spltui [{}].log", current_date));
             temp_path
         }
     };
@@ -128,6 +131,10 @@ fn run_app<B: ratatui::backend::Backend>(
             if !verbose {
                 ui::draw(f, app, theme.clone())
             } else {
+                #[cfg(target_os = "windows")]
+                info!("Running on Windows, adding delay: 175 millis");
+                #[cfg(not(target_os = "windows"))]
+                info!("Running on non-Windows, adding delay: 50 millis");
                 ui::draw_verbose(f, app, theme.clone());
             }
         })?;

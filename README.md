@@ -22,6 +22,7 @@ Sistem Persamaan Linear Terminal User Interface, atau SPLTUI, merupakan sebuah a
 - [crossterm](https://github.com/crossterm-rs/crossterm)
 - [log](https://crates.io/crates/log)
 - [env_logger](https://crates.io/crates/env_logger)
+- [chrono](https://github.com/chronotope/chrono)
 
 ## Instalasi
 
@@ -74,10 +75,10 @@ $ spltui --help
 
 | Sistem Operasi | Kestabilan |
 | :------------- | :--------: |
-| Android (Termux) |   ✅     |
-| IOS (Termux)     |   🛠️     |
-| Linux          |     ✅     |
-| Windows        |     ✅     |
-| MacOS          |     🛠️     |
+| Android (Termux) |       ✅       |
+|     IOS (Ish)    |       🛠️       |
+|       Linux      |       ✅       |
+|       Windows    |       ✅       |
+|       MacOS      |       🛠️       |
 
 Selamat mencoba~!

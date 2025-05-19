@@ -38,7 +38,10 @@ impl App {
         Self {
             state,
             last_key_time: Instant::now(),
+            #[cfg(target_os = "windows")]
             debounce_duration: Duration::from_millis(175),
+            #[cfg(not(target_os = "windows"))]
+            debounce_duration: Duration::from_millis(50),
         }
     }
 
@@ -47,13 +50,17 @@ impl App {
         if now.duration_since(self.last_key_time) < self.debounce_duration {
             return;
         }
-        
+
         self.last_key_time = now;
 
         match self.state.clone() {
             AppState::Menu => self.handle_menu_key(key_event.code),
-            AppState::InputSPLDV(inputs, selected) => self.handle_spldv_key(key_event.code, inputs, selected),
-            AppState::InputSPLSV(inputs, selected) => self.handle_splsv_key(key_event.code, inputs, selected),
+            AppState::InputSPLDV(inputs, selected) => {
+                self.handle_spldv_key(key_event.code, inputs, selected)
+            }
+            AppState::InputSPLSV(inputs, selected) => {
+                self.handle_splsv_key(key_event.code, inputs, selected)
+            }
             AppState::Result(_) => self.handle_result_key(key_event.code),
             AppState::Exit => {}
         }
