@@ -21,6 +21,7 @@ pub fn get_theme_color(color_name: &str, theme: &str) -> Color {
             "blue" => gruvbox_dark::BLUE,
             "cyan" => gruvbox_dark::AQUA,
             "red" => gruvbox_dark::RED,
+            "gray" => gruvbox_dark::GRAY_ALT,
             "fg" => gruvbox_dark::FG,
             _ => gruvbox_dark::BG,
         },
@@ -31,6 +32,7 @@ pub fn get_theme_color(color_name: &str, theme: &str) -> Color {
             "blue" => gruvbox_light::BLUE,
             "cyan" => gruvbox_light::AQUA,
             "red" => gruvbox_light::RED,
+            "gray" => gruvbox_light::GRAY_ALT,
             "fg" => gruvbox_light::FG,
             _ => gruvbox_light::BG,
         },
@@ -238,6 +240,14 @@ fn render_menu_ui(
     render_header(f, chunks[0], ascii_lines, owner, theme);
 
     let instructions = Line::from(vec![
+        Span::styled(
+            " [1/2] ",
+            Style::default().fg(get_theme_color("blue", theme)).bold(),
+        ),
+        Span::styled(
+            "Choose Mode",
+            Style::default().fg(get_theme_color("fg", theme)).bold(),
+        ),
         Span::styled(
             " [Q] ",
             Style::default().fg(get_theme_color("red", theme)).bold(),

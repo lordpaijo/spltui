@@ -111,7 +111,8 @@ impl App {
                     inputs[4].parse(),
                     inputs[5].parse(),
                 ) {
-                    let (result, steps) = SistemPersamaan::spldv_proses(a1, b1, c1, a2, b2, c2);
+                    let (result, steps) =
+                        SistemPersamaan::spldv_proses_frac(a1, b1, c1, a2, b2, c2);
                     let result_str = result
                         .map(|(x, y)| format!("{steps}\n\nHasil:\n  x = {:.2}, y = {:.2}", x, y))
                         .unwrap_or_else(|| format!("{steps}\n\nTidak ada solusi"));
@@ -150,7 +151,7 @@ impl App {
             }
             KeyCode::Enter => {
                 if let (Ok(a), Ok(b)) = (inputs[0].parse(), inputs[1].parse()) {
-                    let (result, steps) = SistemPersamaan::splsv_proses(a, b);
+                    let (result, steps) = SistemPersamaan::splsv_proses_frac(a, b);
                     let result_str = match result {
                         Some(x) => format!("{steps}\n\nHasil:\n  x = {:.2}", x),
                         None => format!("{steps}\n\nTidak ada solusi"),

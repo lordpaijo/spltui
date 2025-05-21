@@ -476,9 +476,9 @@ dependencies = [
 
 [[package]]
 name = "matematika-rs"
-version = "0.3.3"
+version = "0.3.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d08350af0d257c311ce3e3e7cb8644b0ade46d027a2bd17808d5dbdaed4615f2"
+checksum = "2a09d87ad86c9d7015b345d47f1779c0bd807c27f21af8f971139a01921cebab"
 
 [[package]]
 name = "memchr"
