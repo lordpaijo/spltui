@@ -19,8 +19,13 @@ mod themes {
 use app::App;
 
 #[derive(Parser)]
-#[command(author, version, about, long_about = None,
-    name = "SPLTUI")]
+#[command(
+    author,
+    version,
+    about,
+    long_about = None,
+    name = "SPLTUI"
+)]
 
 struct Args {
     #[arg(short, long)]
