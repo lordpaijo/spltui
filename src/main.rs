@@ -21,7 +21,7 @@ use app::App;
 #[derive(Parser)]
 #[command(
     author,
-    version,
+    version = env!("CARGO_PKG_VERSION"),
     about,
     long_about = None,
     name = "SPLTUI"
