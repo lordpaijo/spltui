@@ -1,5 +1,5 @@
 use crate::app::{App, AppState};
-use crate::themes::{gruvbox_dark, gruvbox_light};
+use crate::themes::gruvbox::*;
 use log::debug;
 use ratatui::{
     Frame,
@@ -15,26 +15,26 @@ use ratatui::{
 pub fn get_theme_color(color_name: &str, theme: &str) -> Color {
     match theme {
         "dark" => match color_name {
-            "orange" => gruvbox_dark::ORANGE,
-            "yellow" => gruvbox_dark::YELLOW,
-            "green" => gruvbox_dark::GREEN,
-            "blue" => gruvbox_dark::BLUE,
-            "cyan" => gruvbox_dark::AQUA,
-            "red" => gruvbox_dark::RED,
-            "gray" => gruvbox_dark::GRAY_ALT,
-            "fg" => gruvbox_dark::FG,
-            _ => gruvbox_dark::BG,
+            "orange" => GruvboxDark::ORANGE,
+            "yellow" => GruvboxDark::YELLOW,
+            "green" => GruvboxDark::GREEN,
+            "blue" => GruvboxDark::BLUE,
+            "cyan" => GruvboxDark::AQUA,
+            "red" => GruvboxDark::RED,
+            "gray" => GruvboxDark::GRAY_ALT,
+            "fg" => GruvboxDark::FG,
+            _ => GruvboxDark::BG,
         },
         "light" => match color_name {
-            "orange" => gruvbox_light::ORANGE,
-            "yellow" => gruvbox_light::YELLOW,
-            "green" => gruvbox_light::GREEN,
-            "blue" => gruvbox_light::BLUE,
-            "cyan" => gruvbox_light::AQUA,
-            "red" => gruvbox_light::RED,
-            "gray" => gruvbox_light::GRAY_ALT,
-            "fg" => gruvbox_light::FG,
-            _ => gruvbox_light::BG,
+            "orange" => GruvboxLight::ORANGE,
+            "yellow" => GruvboxLight::YELLOW,
+            "green" => GruvboxLight::GREEN,
+            "blue" => GruvboxLight::BLUE,
+            "cyan" => GruvboxLight::AQUA,
+            "red" => GruvboxLight::RED,
+            "gray" => GruvboxLight::GRAY_ALT,
+            "fg" => GruvboxLight::FG,
+            _ => GruvboxLight::BG,
         },
         _ => Color::White, // Fallback
     }
