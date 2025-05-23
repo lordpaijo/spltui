@@ -14,8 +14,7 @@ use std::path::PathBuf;
 mod app;
 mod ui;
 mod themes {
-    pub mod gruvbox_dark;
-    pub mod gruvbox_light;
+    pub mod gruvbox;
 }
 use app::App;
 
