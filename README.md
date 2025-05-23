@@ -36,7 +36,7 @@ $ cargo install spltui
 Dan SPLTUI berhasil terinstal.
 
 ### Unduh Executable (untuk Windows)
-Untuk mengunduh file executable (`.exe`) dari SPLTUI, dapat dilakukan melalui sumber berikut:
+Untuk mengunduh file executable (`.exe`) dari SPLTUI dapat dilakukan melalui [`assets`](https://github.com/lordpaijo/spltui/releases) yang sudah dirilis, atau bisa juga dari sumber berikut:
 - [Dropbox: spltui: x86_64](https://www.dropbox.com/scl/fo/v0oiew2k2ijb2wxme6yf8/AChqDBWrcvVSXK94c8uSojU?rlkey=oc0qkf6a85sem68ubltp43sgs&st=cnijw800&dl=0)
 
 **Peringatan**: Dengan menggunakan file executable, antivirus dapat mendeteksinya sebagai virus dan / hingga menghapusnya.
