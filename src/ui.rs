@@ -207,7 +207,7 @@ fn render_header(
         .style(Style::default().bold())
         .alignment(Alignment::Center)
         .block(
-            Block::default()
+            Block::bordered()
                 .borders(Borders::ALL)
                 .border_style(Style::default().bold())
                 .bg(get_theme_color("bg", theme))
@@ -215,6 +215,7 @@ fn render_header(
                 .title(" Header ")
                 .title_bottom(owner.clone().centered()),
         )
+        .bold()
         .wrap(Wrap { trim: false });
 
     f.render_widget(header, area);
@@ -245,7 +246,7 @@ fn render_menu_ui(
             Style::default().fg(get_theme_color("blue", theme)).bold(),
         ),
         Span::styled(
-            "Choose Mode",
+            "Pilih Mode",
             Style::default().fg(get_theme_color("fg", theme)).bold(),
         ),
         Span::styled(
@@ -253,7 +254,7 @@ fn render_menu_ui(
             Style::default().fg(get_theme_color("red", theme)).bold(),
         ),
         Span::styled(
-            "Quit ",
+            "Keluar ",
             Style::default().fg(get_theme_color("red", theme)).bold(),
         ),
     ]);
@@ -304,9 +305,6 @@ fn render_input_spldv_ui(
     owner: &Line<'_>,
     theme: &str,
 ) {
-    let outer_block = Block::default().title("Form SPLDV").borders(Borders::ALL);
-    f.render_widget(outer_block, area);
-
     let outer_chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([
@@ -333,7 +331,7 @@ fn render_input_spldv_ui(
             Style::default().fg(get_theme_color("blue", theme)).bold(),
         ),
         Span::styled(
-            "Left/Right ",
+            "Kanan/Kiri ",
             Style::default().fg(get_theme_color("fg", theme)).bold(),
         ),
         Span::styled(
@@ -341,7 +339,7 @@ fn render_input_spldv_ui(
             Style::default().fg(get_theme_color("blue", theme)).bold(),
         ),
         Span::styled(
-            "Submit ",
+            "Hitung ",
             Style::default().fg(get_theme_color("fg", theme)).bold(),
         ),
         Span::styled(
@@ -349,12 +347,12 @@ fn render_input_spldv_ui(
             Style::default().fg(get_theme_color("red", theme)).bold(),
         ),
         Span::styled(
-            "Quit ",
+            "Keluar ",
             Style::default().fg(get_theme_color("red", theme)).bold(),
         ),
     ]);
 
-    let container_block = Block::default()
+    let container_block = Block::bordered()
         .title_bottom(instructions.centered())
         .title(" Input SPLDV ")
         .borders(Borders::ALL)
@@ -363,7 +361,8 @@ fn render_input_spldv_ui(
                 .bg(get_theme_color("bg", theme))
                 .fg(get_theme_color("cyan", theme))
                 .bold(),
-        );
+        )
+        .bold();
     let inner_area = container_block.inner(outer_chunks[1]); // Ambil area dalamnya
     f.render_widget(container_block, outer_chunks[1]);
 
@@ -407,7 +406,7 @@ fn render_input_spldv_ui(
                 Span::raw(&inputs[idx]),
             ]))
             .block(
-                Block::default()
+                Block::bordered()
                     .borders(Borders::ALL)
                     .border_style(if idx == selected {
                         Style::default().fg(get_theme_color("yellow", theme))
@@ -435,9 +434,6 @@ fn render_input_splsv_ui(
     owner: &Line<'_>,
     theme: &str,
 ) {
-    let outer_block = Block::default().title("Form SPLSV").borders(Borders::ALL);
-    f.render_widget(outer_block, area);
-
     let outer_chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([
@@ -464,7 +460,7 @@ fn render_input_splsv_ui(
             Style::default().fg(get_theme_color("blue", theme)).bold(),
         ),
         Span::styled(
-            "Left/Right ",
+            "Kanan/Kiri ",
             Style::default().fg(get_theme_color("fg", theme)).bold(),
         ),
         Span::styled(
@@ -472,7 +468,7 @@ fn render_input_splsv_ui(
             Style::default().fg(get_theme_color("blue", theme)).bold(),
         ),
         Span::styled(
-            "Submit ",
+            "Hitung ",
             Style::default().fg(get_theme_color("fg", theme)).bold(),
         ),
         Span::styled(
@@ -480,12 +476,12 @@ fn render_input_splsv_ui(
             Style::default().fg(get_theme_color("red", theme)).bold(),
         ),
         Span::styled(
-            "Quit ",
+            "Keluar ",
             Style::default().fg(get_theme_color("red", theme)).bold(),
         ),
     ]);
 
-    let container_block = Block::default()
+    let container_block = Block::bordered()
         .title_bottom(instructions.centered())
         .title(" Input SPLSV ")
         .borders(Borders::ALL)
@@ -494,7 +490,8 @@ fn render_input_splsv_ui(
                 .bg(get_theme_color("bg", theme))
                 .fg(get_theme_color("cyan", theme))
                 .bold(),
-        );
+        )
+        .bold();
     let inner_area = container_block.inner(outer_chunks[1]); // Ambil area dalamnya
     f.render_widget(container_block, outer_chunks[1]);
 
@@ -529,7 +526,7 @@ fn render_input_splsv_ui(
             Span::styled(&inputs[i], Style::default().bold()),
         ]))
         .block(
-            Block::default()
+            Block::bordered()
                 .borders(Borders::ALL)
                 .border_style(if i == selected {
                     Style::default().fg(get_theme_color("yellow", theme)).bold()
@@ -579,12 +576,12 @@ fn render_result_ui(
             Style::default().fg(get_theme_color("red", theme)).bold(),
         ),
         Span::styled(
-            "Quit ",
+            "Keluar ",
             Style::default().fg(get_theme_color("red", theme)).bold(),
         ),
     ]);
 
-    let container_block = Block::default()
+    let container_block = Block::bordered()
         .title(" Hasil Perhitungan ")
         .title_bottom(instructions.centered())
         .borders(Borders::ALL)
@@ -595,7 +592,8 @@ fn render_result_ui(
                 .bg(get_theme_color("bg", theme))
                 .fg(get_theme_color("fg", theme))
                 .bold(),
-        );
+        )
+        .bold();
     let inner_area = container_block.inner(outer_chunks[1]);
     f.render_widget(container_block, outer_chunks[1]);
 
