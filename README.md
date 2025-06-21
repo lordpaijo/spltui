@@ -1,7 +1,7 @@
 # SPLTUI
 
 [![Rust](https://img.shields.io/badge/language-Rust-orange)](https://www.rust-lang.org/)
-[![Crates.io](https://img.shields.io/crates/v/spltui)](https://crates.io/crates/your_crate_name)
+[![Crates.io](https://img.shields.io/crates/v/spltui)](https://crates.io/crates/spltui)
 [![GitHub stars](https://img.shields.io/github/stars/lordpaijo/spltui)](https://github.com/lordpaijo/spltui/stargazers)
 [![GitHub issues](https://img.shields.io/github/issues/lordpaijo/spltui)](https://github.com/lordpaijo/spltui/issues)
 [![GitHub forks](https://img.shields.io/github/forks/lordpaijo/spltui)](https://github.com/lordpaijo/spltui/network/members)
